@@ -1,0 +1,168 @@
+<div class=" p-4 sm:p-6">
+  <div class="mt-12 mb-4 sm:mt-12 sm:mb-6 flex justify-between items-center">
+    <h1 class="text-xl sm:text-2xl font-semibold text-gray-200">Semanas</h1>
+  </div>
+ <!-- Buscador con dropdown mejorado -->
+<!-- Buscador con dropdown mejorado -->
+<div class="bg-black-color-700/30 p-4 rounded-lg">
+  <div class="relative">
+    <div class="flex">
+      <div class="relative flex-1">
+        <input type="text"
+               [(ngModel)]="searchTerm"
+               (input)="onSearch($event)"
+               placeholder="Buscar participante..."
+               class="w-full pl-10 pr-3 py-3 bg-black-color-700 text-white rounded-l-lg border border-celeste-color-500 focus:border-celeste-color-600 focus:ring-1 focus:ring-celeste-color-500 focus:outline-none">
+        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      <button type="button"
+              (click)="toggleDropdown($event)"
+              class="px-4 bg-black-color-700 border border-l-0 border-celeste-color-500 rounded-r-lg hover:bg-black-color-600 focus:outline-none focus:ring-1 focus:ring-celeste-color-500">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Lista desplegable mejorada con posición fixed y responsiva -->
+    <div *ngIf="showDropdown" 
+         class="absolute inset-x-0 mt-1 bg-black-color-700 border border-celeste-color-500 rounded-lg shadow-lg z-[1000] w-full">
+      <div class="max-h-[min(400px, calc(100vh - 200px))] overflow-y-auto">
+        <div *ngFor="let participante of participantesFiltrados"
+             (click)="onParticipanteSelect(participante)"
+             class="px-4 py-2 hover:bg-celeste-color-800/50 cursor-pointer text-white transition-colors">
+          {{ participante.part_nombre }}
+        </div>
+        <div *ngIf="participantesFiltrados.length === 0" 
+             class="px-4 py-2 text-gray-400">
+          No se encontraron resultados
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="text-center py-4">
+    <p class="text-gray-400">Cargando datos...</p>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!isLoading && (!semanas || semanas.length === 0) && selectedParticipanteId" 
+       class="text-center py-8">
+    <p class="text-gray-400">No hay semanas registradas para este participante</p>
+  </div>
+
+  <!-- Vista principal -->
+  <div *ngIf="!isLoading && semanas && semanas.length > 0">
+    <!-- Vista móvil mejorada -->
+    <div class="block lg:hidden">
+      <div class="grid gap-4">
+        <div *ngFor="let semana of semanasFiltradas" 
+           class="bg-black-color-700/50 rounded-lg p-4">
+        <div class="space-y-3">
+          <h3 class="text-lg font-medium text-white">{{ semana.nombre_semana }}</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <p class="text-xs text-gray-400">Valor</p>
+              <p class="text-sm font-medium text-white">${{ semana.valor }}</p>
+            </div>
+            <div class="space-y-1">
+              <p class="text-xs text-gray-400">Fecha de Pago</p>
+              <p class="text-sm font-medium text-white">{{ semana.fecha_pago | date:'shortDate' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Vista tablet/desktop mejorada -->
+    <div class="hidden lg:block">
+      <div class="rounded-lg overflow-hidden border border-celeste-color-500">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-400 dark:text-gray-200">
+          <thead class="text-xs uppercase bg-gradient-to-br from-celeste-color-700 to-celeste-color-500 text-celeste-color-100">
+            <tr>
+              <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+                Nombre Semana
+              </th>
+              <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+                Valor
+              </th>
+              <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+                Fecha de Pago
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-transparent">
+            <tr *ngFor="let semana of semanasFiltradas" 
+                class="hover:bg-celeste-color-800/50 border-b border-celeste-color-500 dark:border-celeste-color-400 transition-colors">
+              <td class="px-6 py-4">{{ semana.nombre_semana }}</td>
+              <td class="px-6 py-4">{{ semana.valor }}</td>
+              <td class="px-6 py-4">{{ semana.fecha_pago }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón flotante mejorado -->
+  <button *ngIf="selectedParticipanteId" 
+          (click)="mostrarModalRegistro()"
+          class="fixed bottom-6 right-6 flex items-center justify-center w-14 h-14 bg-gradient-to-r from-celeste-color-600 to-celeste-color-700 text-white rounded-full hover:from-celeste-color-700 hover:to-celeste-color-800 transition-all duration-300 shadow-lg">
+    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+    </svg>
+  </button>
+
+  <!-- Modal de registro mejorado -->
+  <div *ngIf="showRegistroModal"
+       class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-black-color-800 rounded-lg p-6 max-w-md w-full shadow-2xl">
+      <h2 class="text-xl font-bold mb-4 text-white">Registrar Pago Semanal</h2>
+      <form (submit)="registrarPago()" class="space-y-4">
+        <div class="space-y-4">
+          <div class="relative">
+            <label class="block text-gray-400 mb-2 text-sm">Semana</label>
+            <input [(ngModel)]="nuevoPago.semana" 
+                   name="semana"
+                   type="number"
+                   class="w-full p-3 rounded-lg bg-black-color-700 text-white border border-gray-700 focus:border-celeste-color-500 focus:ring-1 focus:ring-celeste-color-500 transition-all"
+                   required readonly />
+          </div>
+          <div class="relative">
+            <label class="block text-gray-400 mb-2 text-sm">Valor</label>
+            <input [(ngModel)]="nuevoPago.valor" 
+                   name="valor"
+                   type="number" 
+                   class="w-full p-3 rounded-lg bg-black-color-700 text-white border border-gray-700 focus:border-celeste-color-500 focus:ring-1 focus:ring-celeste-color-500 transition-all"
+                   placeholder="Ingrese el valor" required />
+          </div>
+          <div class="relative">
+            <label class="block text-gray-400 mb-2 text-sm">Fecha de Pago</label>
+            <input [(ngModel)]="nuevoPago.fecha" 
+                   name="fecha" 
+                   type="date" 
+                   class="w-full p-3 rounded-lg bg-black-color-700 text-white border border-gray-700 focus:border-celeste-color-500 focus:ring-1 focus:ring-celeste-color-500 transition-all"
+                   required />
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 mt-6">
+          <button type="button" 
+                  (click)="cerrarModalRegistro()"
+                  class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+            Cancelar
+          </button>
+          <button type="submit"
+                  class="px-4 py-2 bg-gradient-to-r from-celeste-color-600 to-celeste-color-700 text-white rounded-lg hover:from-celeste-color-700 hover:to-celeste-color-800 transition-all duration-300">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

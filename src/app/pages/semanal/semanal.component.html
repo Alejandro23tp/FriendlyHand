@@ -1,0 +1,140 @@
+<div class="relative overflow-x-auto p-4 sm:p-6">
+  <div class="mt-12 mb-2 sm:mt-12 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <h1 class="text-xl sm:text-2xl font-semibold text-gray-200">Tabla Semanal</h1>
+    <button (click)="downloadNewPdf()"
+            class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-celeste-color-600 to-celeste-color-700 text-white rounded-lg hover:from-celeste-color-700 hover:to-celeste-color-800 transition-all duration-300 flex items-center justify-center gap-2">
+      <svg viewBox="0 0 512 512" class="h-5 w-5 sm:h-6 sm:w-6">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+        <g id="SVGRepo_iconCarrier">
+          <title>pdf-document</title>
+          <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g id="add" fill="#ffffff" transform="translate(85.333333, 42.666667)">
+              <path d="M75.9466667,285.653333 C63.8764997,278.292415 49.6246897,275.351565 35.6266667,277.333333 L1.42108547e-14,277.333333 L1.42108547e-14,405.333333 L28.3733333,405.333333 L28.3733333,356.48 L40.5333333,356.48 C53.1304778,357.774244 65.7885986,354.68506 76.3733333,347.733333 C85.3576891,340.027178 90.3112817,328.626053 89.8133333,316.8 C90.4784904,304.790173 85.3164923,293.195531 75.9466667,285.653333 L75.9466667,285.653333 Z M53.12,332.373333 C47.7608867,334.732281 41.8687051,335.616108 36.0533333,334.933333 L27.7333333,334.933333 L27.7333333,298.666667 L36.0533333,298.666667 C42.094796,298.02451 48.1897668,299.213772 53.5466667,302.08 C58.5355805,305.554646 61.3626692,311.370371 61.0133333,317.44 C61.6596233,323.558965 58.5400493,329.460862 53.12,332.373333 L53.12,332.373333 Z M150.826667,277.333333 L115.413333,277.333333 L115.413333,405.333333 L149.333333,405.333333 C166.620091,407.02483 184.027709,403.691457 199.466667,395.733333 C216.454713,383.072462 225.530463,362.408923 223.36,341.333333 C224.631644,323.277677 218.198313,305.527884 205.653333,292.48 C190.157107,280.265923 170.395302,274.806436 150.826667,277.333333 L150.826667,277.333333 Z M178.986667,376.32 C170.098963,381.315719 159.922142,383.54422 149.76,382.72 L144.213333,382.72 L144.213333,299.946667 L149.333333,299.946667 C167.253333,299.946667 174.293333,301.653333 181.333333,308.053333 C189.877212,316.948755 194.28973,329.025119 193.493333,341.333333 C194.590843,354.653818 189.18793,367.684372 178.986667,376.32 L178.986667,376.32 Z M254.506667,405.333333 L283.306667,405.333333 L283.306667,351.786667 L341.333333,351.786667 L341.333333,329.173333 L283.306667,329.173333 L283.306667,299.946667 L341.333333,299.946667 L341.333333,277.333333 L254.506667,277.333333 L254.506667,405.333333 L254.506667,405.333333 Z M234.666667,7.10542736e-15 L9.52127266e-13,7.10542736e-15 L9.52127266e-13,234.666667 L42.6666667,234.666667 L42.6666667,192 L42.6666667,169.6 L42.6666667,42.6666667 L216.96,42.6666667 L298.666667,124.373333 L298.666667,169.6 L298.666667,192 L298.666667,234.666667 L341.333333,234.666667 L341.333333,106.666667 L234.666667,7.10542736e-15 L234.666667,7.10542736e-15 Z" id="document-pdf"> </path>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <span class="sm:hidden">Generar PDF</span>
+    </button>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="text-center py-4">
+    <p class="text-gray-400">Cargando datos semanales...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error" class="text-center py-4">
+    <p class="text-red-500">{{ error }}</p>
+  </div>
+
+  <!-- Vista móvil mejorada -->
+  <div class="block lg:hidden">
+    <div class="grid gap-4">
+      <div *ngFor="let fila of filas" class="bg-black-color-700/50 rounded-lg p-4">
+        <div class="flex justify-between items-start mb-3">
+          <h3 class="text-lg font-medium text-white">{{ fila.Semana }}</h3>
+          <button (click)="openParticipantesModal(fila)"
+                  class="flex items-center justify-center w-8 h-8 bg-celeste-color-600 rounded-full hover:bg-celeste-color-700 transition-colors">
+            <svg viewBox="0 0 24 24" class="w-5 h-5 text-white">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M9.5852 17.982L7.8182 18.882C7.74952 18.9162 7.66799 18.9121 7.60305 18.8713C7.53811 18.8304 7.49914 18.7587 7.5002 18.682V5.955C7.4896 5.4384 7.89961 5.01093 8.4162 5H17.5832C18.0998 5.01093 18.5098 5.4384 18.4992 5.955V18.682C18.5003 18.7587 18.4613 18.8304 18.3963 18.8713C18.3314 18.9121 18.2499 18.9162 18.1812 18.882L16.4142 17.982C16.3438 17.9461 16.2595 17.9514 16.1942 17.996L14.7722 18.962C14.6986 19.0121 14.6018 19.0121 14.5282 18.962L13.1222 18.007C13.0486 17.9569 12.9518 17.9569 12.8782 18.007L11.4722 18.962C11.3986 19.0121 11.3018 19.0121 11.2282 18.962L9.8052 18C9.7407 17.9542 9.6563 17.9472 9.5852 17.982Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9.9992 11.25C9.58499 11.25 9.2492 11.5858 9.2492 12C9.2492 12.4142 9.58499 12.75 9.9992 12.75V11.25ZM15.9992 12.75C16.4134 12.75 16.7492 12.4142 16.7492 12C16.7492 11.5858 16.4134 11.25 15.9992 11.25V12.75ZM10.9992 13.25C10.585 13.25 10.2492 13.5858 10.2492 14C10.2492 14.4142 10.585 14.75 10.9992 14.75V13.25ZM14.9992 14.75C15.4134 14.75 15.7492 14.4142 15.7492 14C15.7492 13.5858 15.4134 13.25 14.9992 13.25V14.75ZM10.9992 9.25C10.585 9.25 10.2492 9.58579 10.2492 10C10.2492 10.4142 10.585 10.75 10.9992 10.75V9.25ZM14.9992 10.75C15.4134 10.75 15.7492 10.4142 15.7492 10C15.7492 9.58579 15.4134 9.25 14.9992 9.25V10.75ZM9.9992 12.75H15.9992V11.25H9.9992V12.75ZM10.9992 14.75H14.9992V13.25H10.9992V14.75ZM10.9992 10.75H14.9992V9.25H10.9992V10.75Z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-2">
+            <p class="text-xs text-gray-400">Total Semana</p>
+            <p class="text-sm font-medium text-white">${{ fila.TotalSemana.toFixed(2) }}</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-xs text-gray-400">Total Préstamos</p>
+            <p class="text-sm font-medium text-white">${{ fila.TotalPrestamos.toFixed(2) }}</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-xs text-gray-400">Total Intereses</p>
+            <p class="text-sm font-medium text-white">${{ fila.TotalInteres.toFixed(2) }}</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-xs text-gray-400">Préstamos Pagados</p>
+            <p class="text-sm font-medium text-white">${{ fila.PrestamosCancelado.toFixed(2) }}</p>
+          </div>
+        </div>
+        
+        <div class="mt-4 pt-3 border-t border-celeste-color-500">
+          <p class="text-xs text-gray-400">Saldo</p>
+          <p class="text-lg font-semibold text-celeste-color-400">${{ fila.SaldoAnterior.toFixed(2) }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista tablet/desktop mejorada -->
+  <div class="hidden lg:block">
+    <div class="rounded-lg overflow-hidden border border-celeste-color-500">
+      <table class="w-full text-sm text-gray-400">
+        <thead class="text-xs uppercase bg-gradient-to-br from-celeste-color-700 to-celeste-color-500 text-celeste-color-100">
+          <tr>
+            <th scope="col" class="px-4 py-3 text-left">Semana</th>
+            <th scope="col" class="px-4 py-3 text-right">Total Semana</th>
+            <th scope="col" class="px-4 py-3 text-right">Total Préstamos</th>
+            <th scope="col" class="px-4 py-3 text-right">Total Intereses</th>
+            <th scope="col" class="px-4 py-3 text-right">Préstamos Pagados</th>
+            <th scope="col" class="px-4 py-3 text-right">Saldo</th>
+            <th scope="col" class="px-4 py-3 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let fila of filas" 
+              class="border-b border-celeste-color-500 hover:bg-celeste-color-600/30 transition-colors">
+            <td class="px-4 py-3 font-medium text-white">{{ fila.Semana }}</td>
+            <td class="px-4 py-3 text-right">${{ fila.TotalSemana.toFixed(2) }}</td>
+            <td class="px-4 py-3 text-right">${{ fila.TotalPrestamos.toFixed(2) }}</td>
+            <td class="px-4 py-3 text-right">${{ fila.TotalInteres.toFixed(2) }}</td>
+            <td class="px-4 py-3 text-right">${{ fila.PrestamosCancelado.toFixed(2) }}</td>
+            <td class="px-4 py-3 text-right font-medium text-celeste-color-400">${{ fila.SaldoAnterior.toFixed(2) }}</td>
+            <td class="px-4 py-3">
+              <div class="flex justify-center">
+                <button (click)="openParticipantesModal(fila)"
+                        class="flex items-center justify-center w-8 h-8 hover:bg-celeste-color-600 rounded-full transition-colors">
+                  <svg viewBox="0 0 24 24" class="w-5 h-5 text-white">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.5852 17.982L7.8182 18.882C7.74952 18.9162 7.66799 18.9121 7.60305 18.8713C7.53811 18.8304 7.49914 18.7587 7.5002 18.682V5.955C7.4896 5.4384 7.89961 5.01093 8.4162 5H17.5832C18.0998 5.01093 18.5098 5.4384 18.4992 5.955V18.682C18.5003 18.7587 18.4613 18.8304 18.3963 18.8713C18.3314 18.9121 18.2499 18.9162 18.1812 18.882L16.4142 17.982C16.3438 17.9461 16.2595 17.9514 16.1942 17.996L14.7722 18.962C14.6986 19.0121 14.6018 19.0121 14.5282 18.962L13.1222 18.007C13.0486 17.9569 12.9518 17.9569 12.8782 18.007L11.4722 18.962C11.3986 19.0121 11.3018 19.0121 11.2282 18.962L9.8052 18C9.7407 17.9542 9.6563 17.9472 9.5852 17.982Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9.9992 11.25C9.58499 11.25 9.2492 11.5858 9.2492 12C9.2492 12.4142 9.58499 12.75 9.9992 12.75V11.25ZM15.9992 12.75C16.4134 12.75 16.7492 12.4142 16.7492 12C16.7492 11.5858 16.4134 11.25 15.9992 11.25V12.75ZM10.9992 13.25C10.585 13.25 10.2492 13.5858 10.2492 14C10.2492 14.4142 10.585 14.75 10.9992 14.75V13.25ZM14.9992 14.75C15.4134 14.75 15.7492 14.4142 15.7492 14C15.7492 13.5858 15.4134 13.25 14.9992 13.25V14.75ZM10.9992 9.25C10.585 9.25 10.2492 9.58579 10.2492 10C10.2492 10.4142 10.585 10.75 10.9992 10.75V9.25ZM14.9992 10.75C15.4134 10.75 15.7492 10.4142 15.7492 10C15.7492 9.58579 15.4134 9.25 14.9992 9.25V10.75ZM9.9992 12.75H15.9992V11.25H9.9992V12.75ZM10.9992 14.75H14.9992V13.25H10.9992V14.75ZM10.9992 10.75H14.9992V9.25H10.9992V10.75Z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal mejorado -->
+  <div *ngIf="showParticipantesModal" 
+       class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-black-color-800 rounded-lg w-full max-w-lg transform transition-all p-6">
+      <div class="flex justify-between items-center mb-6 pb-4 border-b border-celeste-color-500">
+        <h2 class="text-xl text-white font-semibold text-center w-full">Préstamos</h2>
+        <button (click)="cerrarModalParticipantes()" 
+                class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-celeste-color-600/30">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+        <div *ngFor="let participante of participantesModal" 
+             class="p-4 bg-black-color-700 rounded-lg hover:bg-black-color-600/50 transition-colors">
+          <p class="text-gray-400 mb-2">Nombre: <span class="text-gray-200">{{ participante.participante }}</span></p>
+          <p class="text-gray-400 mb-2">Préstamo: <span class="text-gray-200">${{ participante.prestamo }}</span></p>
+          <p class="text-gray-400 mb-2">Interés: <span class="text-gray-200">${{ participante.interes }}</span></p>
+          <p class="text-gray-400 mb-2">Fecha de Pago: <span class="text-gray-200">{{ participante.fecha_pago }}</span></p>
+          <p class="text-gray-400">Estado: <span class="text-gray-200">{{ participante.estado }}</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

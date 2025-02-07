@@ -1,0 +1,295 @@
+<div class=" p-4 sm:p-6">
+  <!-- Selector y búsqueda unificados -->
+  <div class="mt-12 mb-4 sm:mt-12 sm:mb-6">
+    <h1 class="text-xl sm:text-2xl font-semibold text-gray-200 mb-4">Préstamos por Participante</h1>
+  </div>
+   
+<!-- Buscador con dropdown mejorado -->
+<div class="bg-black-color-700/30 p-4 rounded-lg">
+  <div class="relative">
+    <div class="flex">
+      <div class="relative flex-1">
+        <input type="text"
+               [(ngModel)]="searchTerm"
+               (input)="onSearch($event)"
+               placeholder="Buscar participante..."
+               class="w-full pl-10 pr-3 py-3 bg-black-color-700 text-white rounded-l-lg border border-celeste-color-500 focus:border-celeste-color-600 focus:ring-1 focus:ring-celeste-color-500 focus:outline-none">
+        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      <button type="button"
+              (click)="toggleDropdown($event)"
+              class="px-4 bg-black-color-700 border border-l-0 border-celeste-color-500 rounded-r-lg hover:bg-black-color-600 focus:outline-none focus:ring-1 focus:ring-celeste-color-500">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Lista desplegable mejorada con posición fixed y responsiva -->
+    <div *ngIf="showDropdown" 
+         class="absolute inset-x-0 mt-1 bg-black-color-700 border border-celeste-color-500 rounded-lg shadow-lg z-[1000] w-full">
+      <div class="max-h-[min(400px, calc(100vh - 200px))] overflow-y-auto">
+        <div *ngFor="let participante of participantesFiltrados"
+             (click)="onParticipanteSelect(participante)"
+             class="px-4 py-2 hover:bg-celeste-color-800/50 cursor-pointer text-white transition-colors">
+          {{ participante.part_nombre }}
+        </div>
+        <div *ngIf="participantesFiltrados.length === 0" 
+             class="px-4 py-2 text-gray-400">
+          No se encontraron resultados
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="text-center py-4">
+    <p class="text-gray-400">Cargando datos...</p>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!isLoading && (!prestamos || prestamos.length === 0) && selectedParticipante" 
+       class="text-center py-8">
+    <p class="text-gray-400">No hay préstamos registrados para este participante</p>
+  </div>
+
+  <!-- Vista principal -->
+  <div *ngIf="!isLoading && prestamos && prestamos.length > 0">
+    <!-- Vista móvil mejorada -->
+    <div class="block lg:hidden">
+      <div class="grid gap-4">
+        <div *ngIf="!isLoading && !errorMessage">
+          <ul class="divide-y divide-celeste-color-500">
+            <li *ngFor="let prestamo of prestamosFiltrados" class="p-4 bg-black-color-700/30 rounded-lg mb-3 hover:bg-celeste-color-600/50 transition-colors">
+              <div class="flex flex-col space-y-2">
+                <div class="flex justify-between items-center border-b border-celeste-color-500/30 pb-2">
+                  <span class="text-celeste-color-100 font-medium">Semana {{ prestamo.semana }}</span>
+                  <span class="text-sm px-2 py-1 rounded-full" 
+                        [ngClass]="{'bg-green-500/20 text-green-300': prestamo.estado === 'Pagado',
+                                   'bg-red-500/20 text-red-300': prestamo.estado === 'Pendiente'}">
+                    {{ prestamo.estado }}
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <p class="text-gray-400">Préstamo</p>
+                    <p class="text-gray-200 font-medium">{{ prestamo.prestamo | currency:'USD':'symbol':'1.0-0' }}</p>
+                  </div>
+                  <div>
+                    <p class="text-gray-400">Interés</p>
+                    <p class="text-gray-200 font-medium">{{ prestamo.interes | currency:'USD':'symbol':'1.0-0' }}</p>
+                  </div>
+                  <div class="col-span-2">
+                    <p class="text-gray-400">Fecha</p>
+                    <p class="text-gray-200">{{ prestamo.fecha | date:'dd/MM/yyyy' }}</p>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista tablet/desktop mejorada -->
+    <div class="hidden lg:block">
+      <div class="rounded-lg overflow-hidden border border-celeste-color-500">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-400 dark:text-gray-200">
+          <thead class="text-xs uppercase bg-gradient-to-br from-celeste-color-700 to-celeste-color-500 text-celeste-color-100">
+            <tr>
+              <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+                Semana
+              </th>
+              <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+                Préstamo
+              </th>
+              <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+                Interés
+              </th>
+              <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+                Fecha
+              </th>
+              <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+                Estado
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-transparent">
+            <tr *ngFor="let prestamo of prestamosFiltrados" 
+                class="hover:bg-celeste-color-800/50 border-b border-celeste-color-500 dark:border-celeste-color-400 transition-colors">
+              <td class="px-6 py-4">{{ prestamo.semana }}</td>
+              <td class="px-6 py-4">{{ prestamo.prestamo }}</td>
+              <td class="px-6 py-4">{{ prestamo.interes }}</td>
+              <td class="px-6 py-4">{{ prestamo.fecha }}</td>
+              <td class="px-6 py-4">{{ prestamo.estado }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón flotante para Pago de Préstamo -->
+  <div *ngIf="selectedParticipante"
+    (click)="abrirModalPagoPrestamo()"
+    class="fixed bottom-20 right-6 flex items-center justify-center w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg cursor-pointer hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
+    title="Registrar Pago de Préstamo">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z" />
+    </svg>
+  </div>
+
+  <!-- Botón flotante para Nuevo Préstamo -->
+  <div *ngIf="selectedParticipante"
+    (click)="abrirModalNuevoPrestamo()"
+    class="fixed bottom-6 right-6 flex items-center justify-center w-14 h-14 bg-green-600 text-white rounded-full shadow-lg cursor-pointer hover:bg-green-700 transition-all duration-300 transform hover:scale-105"
+    title="Registrar Nuevo Préstamo">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+    </svg>
+  </div>
+
+  <!-- Modal para Pago de Préstamo -->
+  <div *ngIf="showPagoPrestamoModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div class="bg-black-color-800 rounded-lg p-6 max-w-md w-full">
+      <h2 class="text-xl text-white mb-4">Registrar Pago de Préstamo</h2>
+      <form (ngSubmit)="registrarPagoPrestamo()" class="space-y-4">
+        <div>
+          <label class="block text-gray-400 mb-2">Semana</label>
+          <select [(ngModel)]="nuevoPrestamo.semana"
+                  name="semana"
+                  class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700">
+            <option *ngFor="let semana of semanasDeudoras" [value]="semana.id">
+              {{ semana.pp_semana }}
+            </option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-2">Monto a Pagar</label>
+          <input [(ngModel)]="nuevoPrestamo.valor"
+                 name="valor"
+                 type="number"
+                 class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700" />
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-2">Fecha de Pago</label>
+          <input [(ngModel)]="nuevoPrestamo.fecha"
+                 name="fecha"
+                 type="date"
+                 class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700" />
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-2">Observaciones</label>
+          <textarea [(ngModel)]="nuevoPrestamo.observaciones"
+                    name="observaciones"
+                    class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700"></textarea>
+        </div>
+        <div class="flex justify-end space-x-3 mt-6">
+          <button type="button"
+                  (click)="cerrarModalPagoPrestamo()"
+                  class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
+            Cancelar
+          </button>
+          <button type="submit"
+                  class="px-4 py-2 bg-celeste-color-600 text-white rounded hover:bg-celeste-color-700 transition-colors">
+            Registrar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Modal para Nuevo Préstamo -->
+  <div *ngIf="showNuevoPrestamoModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div class="bg-black-color-800 rounded-lg p-6 max-w-md w-full">
+      <h2 class="text-xl text-white mb-4">Registrar Nuevo Préstamo</h2>
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+        <!-- Participante ID -->
+        <div>
+          <label class="block text-gray-400 mb-2">Participante ID</label>
+          <input [(ngModel)]="prestamoData.part_id"
+                 name="part_id"
+                 type="text"
+                 class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700"
+                 required
+                 disabled />
+        </div>
+  
+        <!-- Semana -->
+        <div>
+          <label class="block text-gray-400 mb-2">Semana</label>
+          <select [(ngModel)]="prestamoData.semana"
+                  name="semana"
+                  class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700"
+                  required>
+            <option *ngFor="let semana of semanas" [value]="semana">
+              {{ semana }}
+            </option>
+          </select>
+        </div>
+  
+        <!-- Préstamo -->
+        <div>
+          <label class="block text-gray-400 mb-2">Préstamo</label>
+          <input [(ngModel)]="prestamoData.prestamo"
+                 name="prestamo"
+                 type="number"
+                 class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700"
+                 (input)="calcularInteres()"
+                 required />
+        </div>
+  
+        <!-- Interés -->
+        <div>
+          <label class="block text-gray-400 mb-2">Interés (%)</label>
+          <select [(ngModel)]="defaultInterest"
+                  name="defaultInterest"
+                  class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700"
+                  (change)="calcularInteres()">
+            <option [value]="5">5%</option>
+            <option [value]="10">10%</option>
+          </select>
+        </div>
+  
+        <!-- Interés Total -->
+        <div>
+          <label class="block text-gray-400 mb-2">Interés Total</label>
+          <input [(ngModel)]="prestamoData.interes"
+                 name="interes"
+                 type="number"
+                 class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700"
+                 min="0"
+                 step="0.01"
+                 disabled />
+        </div>
+  
+        <!-- Fecha del Préstamo -->
+        <div>
+          <label class="block text-gray-400 mb-2">Fecha del Préstamo</label>
+          <input [(ngModel)]="prestamoData.prestamofecha"
+                 name="prestamofecha"
+                 type="date"
+                 class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700"
+                 disabled />
+        </div>
+  
+        <!-- Botones -->
+        <div class="flex justify-end space-x-3 mt-6">
+          <button type="button"
+                  (click)="cerrarModalNuevoPrestamo()"
+                  class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
+            Cancelar
+          </button>
+          <button type="submit"
+                  class="px-4 py-2 bg-celeste-color-600 text-white rounded hover:bg-celeste-color-700 transition-colors">
+            Registrar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,167 @@
+<!-- Toggle button -->
+<button 
+  (click)="toggleSidebar()" 
+  class="fixed top-4 left-4 z-50 p-2.5 rounded-lg bg-black-color-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all duration-200 lg:hidden">
+  <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+  </svg>
+</button>
+
+<!-- Mobile overlay -->
+<div 
+  *ngIf="isOpen && isMobile" 
+  class="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm transition-all"
+  (click)="closeSidebarHandler()">
+</div>
+
+<!-- Sidebar -->
+<aside 
+  id="default-sidebar"
+  class="fixed z-40 w-72 h-screen transition-all duration-300 ease-in-out shadow-xl bg-black-color-800"
+  [class.top-0]="isMobile"
+  [class.top-16]="!isMobile"
+  [class.h-screen]="isMobile"
+  [class.h-[calc(100vh-4rem)]="!isMobile"
+  [ngClass]="{
+    '-translate-x-full': !isOpen,
+    'translate-x-0': isOpen
+  }"
+  aria-label="Sidebar navigation">
+
+  <div class="flex flex-col h-full py-6 px-4 overflow-y-auto">
+    <ul class="space-y-2">
+      <!-- Inicio -->
+      <li [ngClass]="{'mt-14': isMobile}">
+        <a 
+          routerLink="/home" 
+          (click)="handleLinkClick()"
+          routerLinkActive="bg-cyan-100/30 text-cyan-400 border-l-4 border-cyan-400" 
+          [routerLinkActiveOptions]="{exact: true}"
+          class="flex items-center p-3 text-base font-medium text-white rounded-lg hover:bg-cyan-200/20 active:bg-cyan-200/30 transition-all duration-200 group">
+          <svg class="w-6 h-6 text-gray-400 group-hover:text-cyan-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span class="ml-4 tracking-wide">Inicio</span>
+        </a>
+      </li>
+
+      <!-- Participantes -->
+      <li class="group">
+      <!-- Participantes -->
+      <li class="group">
+        <button 
+          type="button" 
+          (click)="toggleSubmenu('participantes')"
+          class="flex items-center w-full p-3 text-base font-medium text-white rounded-lg hover:bg-cyan-200/30 transition-all group">
+          <svg class="w-6 h-6 text-gray-400 group-hover:text-cyan-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <span class="flex-1 ml-3 text-left">Participantes</span>
+          <svg 
+            [class.rotate-180]="submenuStates['participantes']" 
+            class="w-6 h-6 transform transition-transform duration-200" 
+            fill="currentColor" 
+            viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <ul 
+          *ngIf="submenuStates['participantes']" 
+          class="pl-6 space-y-2 transition-all duration-200">
+          <li>
+            <a 
+              routerLink="/participantes" 
+              (click)="handleLinkClick()"
+              routerLinkActive="bg-cyan-100/30"
+              class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
+              Listado
+            </a>
+          </li>
+          <li>
+            <a 
+              routerLink="/participante/semana" 
+              (click)="handleLinkClick()"
+              routerLinkActive="bg-cyan-100/30"
+              class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
+              Semana
+            </a>
+          </li>
+          <li>
+            <a 
+              routerLink="/participante/prestamo" 
+              (click)="handleLinkClick()"
+              routerLinkActive="bg-cyan-100/30"
+              class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
+              Prestamo
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Tabla Semanal -->
+      <li>
+        <a 
+          routerLink="/semanal" 
+          (click)="handleLinkClick()"
+          routerLinkActive="bg-cyan-100/30"
+          class="flex items-center p-3 text-base font-medium text-white rounded-lg hover:bg-cyan-200/30 transition-all group">
+          <svg class="w-6 h-6 text-gray-400 group-hover:text-cyan-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <span class="ml-3">Tabla Semanal</span>
+        </a>
+      </li>
+
+      <!-- Recordatorios -->
+      <li class="group">
+        <button 
+          type="button" 
+          (click)="toggleSubmenu('recordatorios')"
+          class="flex items-center w-full p-3 text-base font-medium text-white rounded-lg hover:bg-cyan-200/30 transition-all group">
+          <svg class="w-6 h-6 text-gray-400 group-hover:text-cyan-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="flex-1 ml-3 text-left">Recordatorios</span>
+          <svg 
+            [class.rotate-180]="submenuStates['recordatorios']" 
+            class="w-6 h-6 transform transition-transform duration-200" 
+            fill="currentColor" 
+            viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+        <ul 
+          *ngIf="submenuStates['recordatorios']" 
+          class="pl-6 space-y-2 transition-all duration-200">
+          <li>
+            <a 
+              routerLink="/recordatorios/pagos" 
+              (click)="handleLinkClick()"
+              routerLinkActive="bg-cyan-100/30"
+              class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
+              Pagos
+            </a>
+          </li>
+          <li>
+            <a 
+              routerLink="/recordatorios/prestamos" 
+              (click)="handleLinkClick()"
+              routerLinkActive="bg-cyan-100/30"
+              class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
+              Prestamos
+            </a>
+          </li>
+          <li>
+            <a 
+              routerLink="/recordatorios/pdf" 
+              (click)="handleLinkClick()"
+              routerLinkActive="bg-cyan-100/30"
+              class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
+              PDF
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</aside>

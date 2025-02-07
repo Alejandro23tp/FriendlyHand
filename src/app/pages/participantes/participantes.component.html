@@ -1,0 +1,217 @@
+<div class="relative overflow-x-auto p-4 sm:p-6">
+  <div class="mt-12 mb-8 sm:mt-12 sm:mb-12 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <h1 class="text-xl sm:text-2xl font-semibold text-gray-200">Gestión de Participantes</h1>
+    <button (click)="mostrarModalRegistro()"
+            class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-celeste-color-600 to-celeste-color-700 text-white rounded-lg hover:from-celeste-color-700 hover:to-celeste-color-800 transition-all duration-300 flex items-center justify-center gap-2">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      <span>Nuevo Participante</span>
+    </button>
+  </div>
+  
+  <!-- Loading state -->
+  <div *ngIf="loading" class="text-center py-4">
+    <p class="text-gray-400">Cargando datos...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error" class="text-center py-4">
+    <p class="text-red-500">{{ error }}</p>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && (!participantes || participantes.length === 0)" 
+       class="text-center py-8">
+    <p class="text-gray-400">No hay participantes registrados</p>
+  </div>
+
+  <!-- Vista principal -->
+  <div *ngIf="!loading && participantes && participantes.length > 0">
+    <!-- Vista móvil mejorada -->
+    <div class="block lg:hidden">
+      <div class="grid gap-4">
+        <div *ngFor="let participante of participantes" 
+         class="bg-black-color-700/50 rounded-lg p-4">
+      <div class="flex justify-between items-start">
+        <div class="space-y-2">
+          <div class="flex items-center gap-3">
+            <svg class="w-8 h-8 text-celeste-color-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+            <div>
+              <h3 class="text-lg font-medium text-white">{{ participante.part_nombre }}</h3>
+              <p class="text-sm text-gray-400">ID: {{ participante.id }}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mt-3">
+            <div class="bg-black-color-800/50 p-2 rounded">
+              <p class="text-xs text-gray-400">Teléfono</p>
+              <p class="text-sm text-white">{{ participante.part_telefono }}</p>
+            </div>
+            <div class="bg-black-color-800/50 p-2 rounded">
+              <p class="text-xs text-gray-400">Cupos</p>
+              <p class="text-sm text-white">{{ participante.part_cupos }}</p>
+            </div>
+          </div>
+        </div>
+        <button (click)="editarParticipante(participante)"
+                class="flex items-center justify-center w-8 h-8 bg-celeste-color-600/20 rounded-full hover:bg-celeste-color-600/40 transition-colors">
+          <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M10 10L4 16V20H8L14 14M10 10L13 7L17 11L14 14M10 10L14 14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+      </div>
+    </div>
+
+    <!-- Vista tablet/desktop mejorada -->
+    <div class="hidden lg:block">
+      <div class="rounded-lg overflow-hidden border border-celeste-color-500">
+        <div class="hidden lg:block bg-black-color-800/30 rounded-xl border border-celeste-color-700/20 overflow-hidden">
+      <table class="w-full text-sm text-left rtl:text-right text-gray-400 dark:text-gray-200">
+      <thead class="text-xs uppercase bg-gradient-to-br from-celeste-color-700 to-celeste-color-500 text-celeste-color-100">
+        <tr>
+          <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+            ID
+          </th>
+          <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+            Nombre
+          </th>
+          <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+            Teléfono
+          </th>
+          <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+            Cupos
+          </th>
+          <th scope="col" class="px-6 py-3 border border-celeste-color-500 dark:border-celeste-color-400">
+            Acciones
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-transparent">
+        <tr *ngFor="let participante of participantes" 
+            class="hover:bg-celeste-color-800/50 border-b border-celeste-color-500 dark:border-celeste-color-400 transition-colors">
+          <td class="px-6 py-4">{{ participante.id }}</td>
+          <td class="px-6 py-4">{{ participante.part_nombre }}</td>
+          <td class="px-6 py-4">{{ participante.part_telefono }}</td>
+          <td class="px-6 py-4">{{ participante.part_cupos }}</td>
+          <td class="px-6 py-4">
+            <button (click)="editarParticipante(participante)"
+                    class="flex justify-center items-center w-10 h-10 bg-transparent border border-gray-500 rounded-full hover:bg-gray-100/50 transition-colors">
+              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M10 10L4 16V20H8L14 14M10 10L13 7L17 11L14 14M10 10L14 14M14 20H20V4H4V10" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de edición mejorado -->
+  <div *ngIf="editingParticipante" 
+       class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-black-color-800 rounded-lg p-6 max-w-md w-full">
+      <h2 class="text-xl text-white mb-4">Editar</h2>
+      <form (submit)="guardarEdicion()" class="space-y-4">
+        <div>
+          <label class="block text-gray-400 mb-2">Nombre</label>
+          <input [(ngModel)]="editingParticipante.nombre" 
+                 name="nombre"
+                 class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700" />
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-2">Teléfono</label>
+          <input [(ngModel)]="editingParticipante.telefono" 
+                 name="telefono"
+                 class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700" />
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-2">Cupos</label>
+          <input [(ngModel)]="editingParticipante.cupo" 
+                 name="cupo"
+                 type="number"
+                 class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700" />
+        </div>
+        <div class="flex justify-end space-x-3 mt-6">
+          <button type="button" 
+                  (click)="cancelarEdicion()"
+                  class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
+            Cancelar
+          </button>
+          <button type="submit"
+                  class="px-4 py-2 bg-celeste-color-600 text-white rounded hover:bg-celeste-color-700 transition-colors">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- Agregar este modal al final del template, junto al modal de edición -->
+<div *ngIf="showRegistroModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+  <div class="bg-black-color-800 rounded-lg p-6 max-w-md w-full shadow-2xl transform transition-all">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl text-white font-semibold">Registrar Nuevo Participante</h2>
+      <button (click)="cerrarModalRegistro()" class="text-gray-400 hover:text-white transition-colors">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    
+    <form (submit)="registrarParticipante($event)" class="space-y-4">
+      <div class="space-y-4">
+        <div class="relative">
+          <label class="block text-gray-400 mb-2 text-sm">Nombre Completo</label>
+          <input [(ngModel)]="nuevoParticipante.nombre" 
+                 name="nombre"
+                 class="w-full p-3 rounded-lg bg-black-color-700 text-white border border-gray-700 focus:border-celeste-color-500 focus:ring-1 focus:ring-celeste-color-500 transition-all"
+                 placeholder="Ingrese el nombre completo" />
+        </div>
+
+        <div class="relative">
+          <label class="block text-gray-400 mb-2 text-sm">Número de Cédula</label>
+          <input [(ngModel)]="nuevoParticipante.cedula" 
+                 name="cedula"
+                 class="w-full p-3 rounded-lg bg-black-color-700 text-white border border-gray-700 focus:border-celeste-color-500 focus:ring-1 focus:ring-celeste-color-500 transition-all"
+                 placeholder="Ingrese el número de cédula" />
+        </div>
+
+        <div class="relative">
+          <label class="block text-gray-400 mb-2 text-sm">Teléfono</label>
+          <input [(ngModel)]="nuevoParticipante.telefono" 
+                 name="telefono"
+                 class="w-full p-3 rounded-lg bg-black-color-700 text-white border border-gray-700 focus:border-celeste-color-500 focus:ring-1 focus:ring-celeste-color-500 transition-all"
+                 placeholder="Ingrese el número de teléfono" />
+        </div>
+
+        <div class="relative">
+          <label class="block text-gray-400 mb-2 text-sm">Cupos</label>
+          <input [(ngModel)]="nuevoParticipante.cupo" 
+                 name="cupo"
+                 type="number"
+                 class="w-full p-3 rounded-lg bg-black-color-700 text-white border border-gray-700 focus:border-celeste-color-500 focus:ring-1 focus:ring-celeste-color-500 transition-all"
+                 placeholder="Ingrese el número de cupos" />
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-3 mt-6">
+        <button type="button" 
+                (click)="cerrarModalRegistro()"
+                class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+          Cancelar
+        </button>
+        <button type="submit"
+                class="px-4 py-2 bg-gradient-to-r from-celeste-color-600 to-celeste-color-700 text-white rounded-lg hover:from-celeste-color-700 hover:to-celeste-color-800 transition-all duration-300">
+          Registrar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
