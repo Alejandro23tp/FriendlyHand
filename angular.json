@@ -34,15 +34,36 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "core-js/modules/es.promise",
+              "core-js/modules/es.string.match",
+              "core-js/modules/es.string.replace",
+              "core-js/modules/es.string.starts-with",
+              "core-js/modules/es.array.iterator",
+              "core-js/modules/web.dom-collections.iterator",
+              "core-js/modules/es.array.reduce",
+              "core-js/modules/es.string.ends-with",
+              "core-js/modules/es.string.split",
+              "raf",
+              "core-js/modules/es.string.trim",
+              "rgbcolor",
+              "core-js/modules/es.array.index-of",
+              "core-js/modules/es.string.includes",
+              "core-js/modules/es.array.reverse",
+              "core-js/modules/es.regexp.to-string",
+              "jspdf-autotable",
+              "html2canvas",
+              "dompurify"
+            ]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
