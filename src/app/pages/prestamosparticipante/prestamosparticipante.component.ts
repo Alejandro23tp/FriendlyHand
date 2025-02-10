@@ -157,7 +157,7 @@ export class PrestamosparticipanteComponent implements OnInit {
       this.errorMessage = 'Por favor, seleccione un participante.';
       return;
     }
-  
+    
     this.prestamoService.getPrestamos_Participante(this.selectedParticipanteId).subscribe({
       next: (response) => {
         this.semanasDeudoras = response.data.filter((item: any) => item.estado !== 'Cancelado');
@@ -211,9 +211,12 @@ export class PrestamosparticipanteComponent implements OnInit {
   
 
   abrirModalNuevoPrestamo(): void {
-    console.log('Método abrirModalNuevoPrestamo ejecutado');
+    
+    console.log('Método abrirModalNuevoPrestamo ejecutado', this.selectedParticipanteId);
+    this.prestamoData.part_id = this.selectedParticipanteId; //agg
     this.showNuevoPrestamoModal = true;
     this.nuevoPrestamo = {
+      part_id: this.selectedParticipanteId,
       semana: '',
       prestamo: '',
       interes: '',
@@ -249,7 +252,7 @@ export class PrestamosparticipanteComponent implements OnInit {
   onSubmit(): void {
     if (this.validarDatosNuevoPrestamo()) {
       const nuevoPrestamo = {
-        part_id: this.selectedParticipanteId,
+        part_id: this.selectedParticipanteId, //agg
         semana: this.nuevoPrestamo.semana,
         prestamo: this.nuevoPrestamo.prestamo,
         interes: parseFloat(this.nuevoPrestamo.interes),
