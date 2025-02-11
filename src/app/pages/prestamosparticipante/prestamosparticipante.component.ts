@@ -179,6 +179,7 @@ export class PrestamosparticipanteComponent implements OnInit {
 
   cerrarModalPagoPrestamo(): void {
     this.showPagoPrestamoModal = false;
+    this.limpiarCamposPagoPrestamo(); // Limpiar campos
   }
   //Registrar un pago de préstamo
   registrarPagoPrestamo(): void {
@@ -211,26 +212,23 @@ export class PrestamosparticipanteComponent implements OnInit {
   
 
   abrirModalNuevoPrestamo(): void {
-    
-    console.log('Método abrirModalNuevoPrestamo ejecutado', this.selectedParticipanteId);
-    this.prestamoData.part_id = this.selectedParticipanteId; //agg
+    if (!this.selectedParticipanteId) {
+      this.errorMessage = 'Por favor, seleccione un participante.';
+      return;
+    }
+
+    this.prestamoData.part_id = this.selectedParticipanteId; // Asignar el ID del participante
     this.showNuevoPrestamoModal = true;
-    this.nuevoPrestamo = {
-      part_id: this.selectedParticipanteId,
-      semana: '',
-      prestamo: '',
-      interes: '',
-      fecha: this.fechaActual,
-      observaciones: 'Ninguna.'
-    };
   }
   
 
   cerrarModalNuevoPrestamo(): void {
     this.showNuevoPrestamoModal = false;
+    this.limpiarCamposNuevoPrestamo(); // Limpiar campos
   }
 
   listarSemanas(part_id: string) {
+    this.semanas = [];
     this.semanasService.getSemanas_Participante(part_id).subscribe((Response) => {
       Response.data.forEach((item: any) => {
         this.semanas.push(item.nombre_semana);
@@ -250,45 +248,68 @@ export class PrestamosparticipanteComponent implements OnInit {
   
   //Registrar un nuevo préstamo
   onSubmit(): void {
-    if (this.validarDatosNuevoPrestamo()) {
-      const nuevoPrestamo = {
-        part_id: this.selectedParticipanteId, //agg
-        semana: this.nuevoPrestamo.semana,
-        prestamo: this.nuevoPrestamo.prestamo,
-        interes: parseFloat(this.nuevoPrestamo.interes),
-        estado: 'Pendiente',
-        fecha: this.nuevoPrestamo.fecha,
-        observaciones: this.nuevoPrestamo.observaciones
-      };
-  
-      // Ajuste realizado: usar registrarPagoPrestamo en lugar de registrarPagosPrestamo
-      this.prestamoService.registrarPrestamo(nuevoPrestamo).subscribe({
-        next: (response) => {
-          console.log('Nuevo préstamo registrado:', response);
-          this.cerrarModalNuevoPrestamo();
-          this.cargarPrestamos(this.selectedParticipanteId); // Recargar los préstamos del participante
-        },
-        error: (error) => {
-          console.error('Error al registrar nuevo préstamo:', error);
-          this.errorMessage = 'No se pudo registrar el nuevo préstamo.';
-        }
-      });
+    if (!this.validarDatosNuevoPrestamo()) {
+      return; // Detener si la validación falla
     }
+
+    const nuevoPrestamo = {
+      part_id: this.prestamoData.part_id, // Usar el ID del participante
+      semana: this.prestamoData.semana,
+      prestamo: parseFloat(this.prestamoData.prestamo),
+      interes: parseFloat(this.prestamoData.interes),
+      estado: 'Pendiente', // Estado por defecto
+      fecha: this.prestamoData.prestamofecha,
+    };
+
+    this.prestamoService.registrarPrestamo(nuevoPrestamo).subscribe({
+      next: (response) => {
+        console.log('Nuevo préstamo registrado:', response);
+        this.cerrarModalNuevoPrestamo();
+        this.cargarPrestamos(this.selectedParticipanteId); // Recargar los préstamos del participante
+      },
+      error: (error) => {
+        console.error('Error al registrar nuevo préstamo:', error);
+        this.errorMessage = 'No se pudo registrar el nuevo préstamo.';
+      }
+    });
   }
-  
 
   validarDatosNuevoPrestamo(): boolean {
-    if (!this.nuevoPrestamo.semana || !this.nuevoPrestamo.prestamo) {
+    if (!this.prestamoData.semana || !this.prestamoData.prestamo || !this.prestamoData.interes) {
       this.errorMessage = 'Por favor, complete todos los campos requeridos.';
       return false;
     }
 
-    if (isNaN(parseFloat(this.nuevoPrestamo.prestamo)) || parseFloat(this.nuevoPrestamo.prestamo) <= 0) {
-      this.errorMessage = 'El valor del préstamo debe ser un número positivo.';
+    if (isNaN(parseFloat(this.prestamoData.prestamo))) {
+      this.errorMessage = 'El valor del préstamo debe ser un número válido.';
+      return false;
+    }
+
+    if (isNaN(parseFloat(this.prestamoData.interes))) {
+      this.errorMessage = 'El valor del interés debe ser un número válido.';
       return false;
     }
 
     return true;
   }
 
+  limpiarCamposPagoPrestamo(): void {
+    this.nuevoPrestamo = {
+      semana: '',
+      valor: 0,
+      fecha: this.fechaActual,
+      observaciones: ''
+    };
+  }
+
+  limpiarCamposNuevoPrestamo(): void {
+    this.prestamoData = {
+      part_id: '', // ID del participante
+      semana: null,
+      prestamo: '',
+      interes: '',
+      prestamofecha: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
+    };
+    this.defaultInterest = 5; // Restablecer el interés por defecto
+  }
 }
