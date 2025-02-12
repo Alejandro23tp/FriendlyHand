@@ -71,4 +71,20 @@ export class PrestamosService {
       "pp_semana": semana
     }); 
   }
+
+  listarcuotapagosprestamos(id:String){
+    const url = `${this.environment}listarpagosid`;
+    return this.http.post<any>(url,{
+      "prestpart_id": id
+    });
+  }
+
+  // Método para cancelar un préstamo
+  cancelarPrestamo(pp_partId: string, pp_semana: string) {
+    const url = `${this.environment}cancelarPrestamo`;
+    return this.http.post<any>(url, {
+      pp_partId: pp_partId,
+      pp_semana: pp_semana
+    });
+  }
 }

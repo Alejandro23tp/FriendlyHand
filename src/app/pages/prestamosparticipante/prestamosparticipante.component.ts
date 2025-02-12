@@ -32,6 +32,12 @@ export class PrestamosparticipanteComponent implements OnInit {
   showDropdown = false;
   allParticipantes: any[] = [];
 
+  showPagosModal: boolean = false;
+  semanaSeleccionada: string = '';
+  pagos: any[] = [];
+  pagosFiltrados: any[] = [];
+  totalPagosSemana: number = 0;
+
   prestamoData = {
     part_id: '', // ID del participante
     semana: null,
@@ -39,6 +45,8 @@ export class PrestamosparticipanteComponent implements OnInit {
     interes: '',
     prestamofecha: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
   };
+
+  prestamoActual: any = null; // Nueva propiedad para almacenar el préstamo actual
 
   constructor(
     private prestamoService: PrestamosService,
@@ -100,13 +108,28 @@ export class PrestamosparticipanteComponent implements OnInit {
     this.cargarPrestamos(participante.id);
   }
 
+  // Función de utilidad para extraer el número de semana
+  private extraerNumeroSemana(semana: string): number {
+    const numero = parseInt(semana.replace(/[^0-9]/g, ''));
+    return isNaN(numero) ? 0 : numero;
+  }
+
+  // Función para ordenar préstamos por semana
+  private ordenarPrestamosPorSemana(prestamos: any[]): any[] {
+    return prestamos.sort((a, b) => {
+      const semanaA = this.extraerNumeroSemana(a.semana);
+      const semanaB = this.extraerNumeroSemana(b.semana);
+      return semanaA - semanaB;
+    });
+  }
 
   cargarPrestamos(participanteId: string): void {
     this.isLoading = true;
     this.listarSemanas(participanteId);//pruebaaa
     this.prestamoService.getPrestamos_Participante(participanteId).subscribe({
       next: (response) => {
-        this.prestamos = response.data.map((item: any) => ({
+        // Mapear los datos
+        const prestamosTemp = response.data.map((item: any) => ({
           id: item.id,
           semana: item.pp_semana,
           prestamo: item.pp_prestamo,
@@ -114,7 +137,11 @@ export class PrestamosparticipanteComponent implements OnInit {
           fecha: item.fecha_pago,
           estado: item.estado
         }));
-        this.prestamosFiltrados = [...this.prestamos]; // Inicializar el array filtrado con todos los datos
+
+        // Ordenar los préstamos por semana
+        this.prestamos = this.ordenarPrestamosPorSemana(prestamosTemp);
+        this.prestamosFiltrados = [...this.prestamos];
+        
         this.selectedParticipante = this.participantes.find(p => p.id === participanteId);
         this.cargarSemanasDeudoras(participanteId); // Cargar semanas deudoras
         this.isLoading = false;
@@ -166,7 +193,7 @@ export class PrestamosparticipanteComponent implements OnInit {
           semana: '',
           valor: 0,
           fecha: this.fechaActual,
-          observaciones: ''
+          observaciones: 'Ninguna'
         };
       },
       error: (error) => {
@@ -195,12 +222,22 @@ export class PrestamosparticipanteComponent implements OnInit {
       fecha: this.nuevoPrestamo.fecha,
       observaciones: this.nuevoPrestamo.observaciones
     };
-  
+    console.log(nuevoPago);
     this.prestamoService.registrarPagosPrestamo(nuevoPago).subscribe({
       next: (response) => {
         console.log('Pago registrado:', response);
         this.cerrarModalPagoPrestamo();
-        this.cargarPrestamos(this.selectedParticipanteId);
+        
+        // Después de registrar el pago, verificar si el préstamo debe ser cancelado
+        this.prestamoService.listarcuotapagosprestamos(this.selectedParticipanteId).subscribe({
+          next: (pagosResponse) => {
+            this.pagosFiltrados = pagosResponse.data.filter((pago: any) => 
+              pago.semana === this.nuevoPrestamo.semana
+            );
+            this.calcularTotalPagosSemana();
+            this.cargarPrestamos(this.selectedParticipanteId);
+          }
+        });
       },
       error: (error) => {
         console.error('Error al registrar pago:', error);
@@ -263,12 +300,12 @@ export class PrestamosparticipanteComponent implements OnInit {
 
     this.prestamoService.registrarPrestamo(nuevoPrestamo).subscribe({
       next: (response) => {
-        console.log('Nuevo préstamo registrado:', response);
+       //   console.log('Nuevo préstamo registrado:', response);
         this.cerrarModalNuevoPrestamo();
         this.cargarPrestamos(this.selectedParticipanteId); // Recargar los préstamos del participante
       },
       error: (error) => {
-        console.error('Error al registrar nuevo préstamo:', error);
+       //   console.error('Error al registrar nuevo préstamo:', error);
         this.errorMessage = 'No se pudo registrar el nuevo préstamo.';
       }
     });
@@ -311,5 +348,77 @@ export class PrestamosparticipanteComponent implements OnInit {
       prestamofecha: formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
     };
     this.defaultInterest = 5; // Restablecer el interés por defecto
+  }
+
+  // Método para abrir el modal y listar los pagos
+  abrirModalPagos(prestpart_id: string, semana: string): void {
+    // Extraer solo el número de semana (últimos dígitos después de "Semana")
+    const numeroSemana = semana.replace(/[^0-9]/g, '');
+    this.semanaSeleccionada = numeroSemana;
+  
+   // console.log("ID Participante:", prestpart_id);
+    //  console.log("Número de Semana:", numeroSemana);
+  
+    // Obtener el préstamo actual
+    this.prestamoActual = this.prestamos.find(p => p.semana === semana);
+
+    this.prestamoService.listarcuotapagosprestamos(prestpart_id).subscribe({
+      next: (response) => {
+         // console.log("Respuesta completa:", response);
+        // Filtrar los pagos por semana
+        this.pagosFiltrados = response.data.filter((pago: any) => {
+          //  console.log("Comparando:", pago.semana, "con", numeroSemana);
+          return pago.semana === numeroSemana;
+        });
+        //  console.log("Pagos filtrados:", this.pagosFiltrados);
+        this.calcularTotalPagosSemana();
+        this.showPagosModal = true;
+      },
+      error: (error) => {
+        //  console.error('Error al listar pagos:', error);
+        this.errorMessage = 'No se pudieron listar los pagos.';
+      }
+    });
+  }
+  
+  // Método para cerrar el modal
+  cerrarModalPagos(): void {
+    this.showPagosModal = false;
+    this.pagosFiltrados = [];
+    this.semanaSeleccionada = '';
+    this.totalPagosSemana = 0;
+    this.prestamoActual = null;
+  }
+
+  calcularTotalPagosSemana(): void {
+    this.totalPagosSemana = this.pagosFiltrados.reduce((total, pago) => {
+      return total + parseFloat(pago.valor);
+    }, 0);
+
+   //   console.log(`Total de pagos para la semana ${this.semanaSeleccionada}: $${this.totalPagosSemana}`);
+    this.verificarCancelacionPrestamo();
+  }
+
+  verificarCancelacionPrestamo(): void {
+    if (!this.prestamoActual) return;
+    
+    const totalPrestamo = parseFloat(this.prestamoActual.prestamo) + parseFloat(this.prestamoActual.interes);
+    //  console.log('Total del préstamo (préstamo + interés):', totalPrestamo);
+    //  console.log('Total pagado:', this.totalPagosSemana);
+     // console.log('Semana a verificar:', this.prestamoActual.semana);
+
+    if (this.totalPagosSemana >= totalPrestamo && this.prestamoActual.estado !== 'Cancelado') {
+     //   console.log('El préstamo ha sido completamente pagado, actualizando estado...');
+      this.prestamoService.cancelarPrestamo(this.selectedParticipanteId, this.prestamoActual.semana)
+        .subscribe({
+          next: (response) => {
+        //      console.log('Préstamo marcado como cancelado:', response);
+            this.cargarPrestamos(this.selectedParticipanteId); // Recargar los préstamos
+          },
+          error: (error) => {
+         //     console.error('Error al cancelar el préstamo:', error);
+          }
+        });
+    }
   }
 }
