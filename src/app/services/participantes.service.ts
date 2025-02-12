@@ -70,4 +70,29 @@ export class ParticipantesService {
   getSelectedParticipanteId(): string {
     return this.selectedParticipanteId;
   }
+
+  obtenerPrestamosActivos() {
+    const url = `${this.environment}obtenerPrestamosActivos`;
+    return this.http.get<any>(url);
+  }
+
+  obtenerTotalPrestamos() {
+    const url = `${this.environment}obtenerTotalPrestamos`;
+    return this.http.get<any>(url);
+  }
+
+  obtenerDashboardStats() {
+    const url = `${this.environment}obtenerDashboardStats`;
+    return this.http.get<any>(url);
+  }
+
+  obtenerUltimasTransacciones() {
+    const url = `${this.environment}obtenerUltimasTransacciones`;
+    return this.http.get<any>(url);
+  }
+
+  obtenerParticipantesDeudores() {
+    const url = `${this.environment}obtenerParticipantesDeudores`;
+    return this.http.get<any>(url);
+  }
 }

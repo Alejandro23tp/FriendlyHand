@@ -1,94 +1,104 @@
-<main class="min-h-screen  bg-black-color-800 p-6 pt-20">
-  <div class="container mx-auto space-y-8 max-w-4xl">
-    <!-- Sección Hero -->
-    <section class="relative bg-transparent backdrop-blur-md border border-primary-500 rounded-xl p-8 shadow-xl">
-      <header class="text-center mb-8">
-        <h1 class="text-4xl font-extrabold text-primary-50 mb-4">Bienvenido a Banco Mano Amiga</h1>
-        <p class="text-xl text-primary-200">Construyendo comunidades financieras sólidas a través de la cooperación y confianza mutua.</p>
-      </header>
-    </section>
-
-    <!-- Sección ¿Qué es Mano Amiga? -->
-    <section class="bg-transparent backdrop-blur-md border border-butterfly-bush-500 rounded-xl p-8 shadow-xl">
-      <h2 class="text-3xl font-bold text-primary-50 mb-6">¿Qué es Mano Amiga?</h2>
-      <div class="space-y-6 text-primary-200 leading-relaxed">
-        <p>
-          <strong>Banco Mano Amiga</strong> es una iniciativa comunitaria que facilita la gestión de grupos de ahorro y préstamo, donde los participantes se unen para crear un fondo común que beneficia a todos los miembros.
-        </p>
-        <p>
-          Nuestro sistema se basa en la confianza y el apoyo mutuo, donde cada integrante contribuye semanalmente a un fondo común administrado por un líder de confianza. Este fondo sirve como respaldo financiero para el grupo, permitiendo acceder a préstamos con términos justos y transparentes.
-        </p>
-      </div>
-    </section>
-
-    <!-- Sección Beneficios -->
-    <section class="bg-transparent backdrop-blur-md border border-primary-500 rounded-xl p-8 shadow-xl">
-      <h2 class="text-3xl font-bold text-primary-50 mb-6">Beneficios del Sistema</h2>
-      <div class="grid gap-6 md:grid-cols-2">
-        <div class="space-y-4">
-          <h3 class="text-xl font-semibold text-primary-100">Para los Participantes</h3>
-          <ul class="space-y-3 text-primary-200">
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-400 mr-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Acceso a préstamos con términos favorables
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-400 mr-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Fomento del ahorro sistemático
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-400 mr-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Apoyo financiero en momentos de necesidad
-            </li>
-          </ul>
-        </div>
-        <div class="space-y-4">
-          <h3 class="text-xl font-semibold text-primary-100">Para la Comunidad</h3>
-          <ul class="space-y-3 text-primary-200">
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-400 mr-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Fortalecimiento de lazos comunitarios
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-400 mr-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Desarrollo de cultura financiera
-            </li>
-            <li class="flex items-start">
-              <svg class="w-6 h-6 text-primary-400 mr-2 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-              Crecimiento económico local
-            </li>
-          </ul>
+<main class="min-h-screen bg-black-color-800 pt-20">
+  <!-- Banner de Bienvenida -->
+  <section class="px-6 py-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="bg-gradient-to-r from-primary-500/10 to-butterfly-bush-500/10 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div class="text-center md:text-left space-y-2">
+            <h1 class="text-3xl md:text-4xl font-bold text-white">
+              {{greeting}}, {{userData?.usr_nombre || 'Usuario'}}! 👋
+            </h1>
+            <p class="text-primary-200">
+              Panel de Control - Banco Mano Amiga
+            </p>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Sección Funcionamiento -->
-    <section class="bg-transparent backdrop-blur-md border border-butterfly-bush-500 rounded-xl p-8 shadow-xl">
-      <h2 class="text-3xl font-bold text-primary-50 mb-6">¿Cómo Funciona?</h2>
-      <div class="space-y-4 text-primary-200 leading-relaxed">
-        <p>
-          El sistema opera de manera simple y transparente:
-        </p>
-        <ol class="space-y-4 ml-6 list-decimal">
-          <li>Los miembros realizan aportaciones semanales al fondo común.</li>
-          <li>El líder del grupo gestiona y resguarda los fondos de manera segura.</li>
-          <li>Los participantes pueden solicitar préstamos del fondo común.</li>
-          <li>Los préstamos se otorgan con tasas de interés justas, acordadas por el grupo.</li>
-          <li>Los beneficios generados por los intereses se distribuyen entre los miembros.</li>
-        </ol>
-      </div>
-    </section>
+  <!-- Estado de Carga -->
+  <div *ngIf="loading" class="flex justify-center py-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
   </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="mx-6 mb-8">
+    <div class="max-w-7xl mx-auto bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-lg">
+      {{error}}
+    </div>
+  </div>
+
+  <!-- Estadísticas -->
+  <section *ngIf="!loading" class="px-6 py-8">
+    <div class="max-w-7xl mx-auto grid gap-6 md:grid-cols-2">
+      <!-- Card Participantes -->
+      <div class="bg-black-color-900/50 rounded-xl p-6 border border-primary-500/20 hover:border-primary-500/50 transition-all">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-primary-200">Total Participantes</h3>
+          <div class="p-2 bg-primary-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-white mb-2">{{stats.participantes}}</p>
+        <p class="text-sm text-primary-300">Miembros activos</p>
+      </div>
+
+      <!-- Card Préstamos Activos -->
+      <div class="bg-black-color-900/50 rounded-xl p-6 border border-butterfly-bush-500/20 hover:border-butterfly-bush-500/50 transition-all">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-primary-200">Préstamos Activos</h3>
+          <div class="p-2 bg-butterfly-bush-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-butterfly-bush-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-white mb-2">{{stats.prestamosActivos}}</p>
+        <p class="text-sm text-primary-300">Préstamos en curso</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Enlaces Rápidos -->
+  <section class="px-6 py-8">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-2xl font-bold text-white mb-6">Acciones Rápidas</h2>
+      <div class="grid gap-4 md:grid-cols-2">
+        <!-- Gestión de Participantes -->
+        <a routerLink="/participantes" 
+           class="group p-6 bg-black-color-900/50 rounded-xl border border-white/10 hover:border-primary-500 transition-all">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-2">Participantes</h3>
+              <p class="text-primary-200">{{stats.participantes}} miembros registrados</p>
+            </div>
+            <div class="p-3 bg-primary-500/10 rounded-lg group-hover:bg-primary-500/20 transition-all">
+              <svg class="w-6 h-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+            </div>
+          </div>
+        </a>
+
+        <!-- Gestión de Préstamos -->
+        <a routerLink="/prestamos" 
+           class="group p-6 bg-black-color-900/50 rounded-xl border border-white/10 hover:border-primary-500 transition-all">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-white mb-2">Préstamos</h3>
+              <p class="text-primary-200">{{stats.prestamosActivos}} préstamos activos</p>
+            </div>
+            <div class="p-3 bg-primary-500/10 rounded-lg group-hover:bg-primary-500/20 transition-all">
+              <svg class="w-6 h-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
 </main>

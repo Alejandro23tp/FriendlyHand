@@ -356,26 +356,26 @@ export class PrestamosparticipanteComponent implements OnInit {
     const numeroSemana = semana.replace(/[^0-9]/g, '');
     this.semanaSeleccionada = numeroSemana;
   
-   // console.log("ID Participante:", prestpart_id);
-    //  console.log("Número de Semana:", numeroSemana);
+   console.log("ID Participante:", prestpart_id);
+     console.log("Número de Semana:", numeroSemana);
   
     // Obtener el préstamo actual
     this.prestamoActual = this.prestamos.find(p => p.semana === semana);
 
     this.prestamoService.listarcuotapagosprestamos(prestpart_id).subscribe({
       next: (response) => {
-         // console.log("Respuesta completa:", response);
+          console.log("Respuesta completa:", response);
         // Filtrar los pagos por semana
         this.pagosFiltrados = response.data.filter((pago: any) => {
           //  console.log("Comparando:", pago.semana, "con", numeroSemana);
           return pago.semana === numeroSemana;
         });
-        //  console.log("Pagos filtrados:", this.pagosFiltrados);
+          console.log("Pagos filtrados:", this.pagosFiltrados);
         this.calcularTotalPagosSemana();
         this.showPagosModal = true;
       },
       error: (error) => {
-        //  console.error('Error al listar pagos:', error);
+          console.error('Error al listar pagos:', error);
         this.errorMessage = 'No se pudieron listar los pagos.';
       }
     });
@@ -395,7 +395,7 @@ export class PrestamosparticipanteComponent implements OnInit {
       return total + parseFloat(pago.valor);
     }, 0);
 
-   //   console.log(`Total de pagos para la semana ${this.semanaSeleccionada}: $${this.totalPagosSemana}`);
+      console.log(`Total de pagos para la semana ${this.semanaSeleccionada}: $${this.totalPagosSemana}`);
     this.verificarCancelacionPrestamo();
   }
 
@@ -403,20 +403,20 @@ export class PrestamosparticipanteComponent implements OnInit {
     if (!this.prestamoActual) return;
     
     const totalPrestamo = parseFloat(this.prestamoActual.prestamo) + parseFloat(this.prestamoActual.interes);
-    //  console.log('Total del préstamo (préstamo + interés):', totalPrestamo);
-    //  console.log('Total pagado:', this.totalPagosSemana);
-     // console.log('Semana a verificar:', this.prestamoActual.semana);
+    console.log('Total del préstamo (préstamo + interés):', totalPrestamo);
+    console.log('Total pagado:', this.totalPagosSemana);
+      console.log('Semana a verificar:', this.prestamoActual.semana);
 
     if (this.totalPagosSemana >= totalPrestamo && this.prestamoActual.estado !== 'Cancelado') {
-     //   console.log('El préstamo ha sido completamente pagado, actualizando estado...');
+       console.log('El préstamo ha sido completamente pagado, actualizando estado...');
       this.prestamoService.cancelarPrestamo(this.selectedParticipanteId, this.prestamoActual.semana)
         .subscribe({
           next: (response) => {
-        //      console.log('Préstamo marcado como cancelado:', response);
+             console.log('Préstamo marcado como cancelado:', response);
             this.cargarPrestamos(this.selectedParticipanteId); // Recargar los préstamos
           },
           error: (error) => {
-         //     console.error('Error al cancelar el préstamo:', error);
+           console.error('Error al cancelar el préstamo:', error);
           }
         });
     }
