@@ -29,10 +29,10 @@
     </div>
   </div>
 
-  <!-- Estadísticas -->
-  <section *ngIf="!loading" class="px-6 py-8">
-    <div class="max-w-7xl mx-auto grid gap-6 md:grid-cols-2">
-      <!-- Card Participantes -->
+  <!-- Dashboard Stats -->
+  <section *ngIf="!loading && !error" class="px-6 py-8">
+    <div class="max-w-7xl mx-auto grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <!-- Total Participantes -->
       <div class="bg-black-color-900/50 rounded-xl p-6 border border-primary-500/20 hover:border-primary-500/50 transition-all">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-primary-200">Total Participantes</h3>
@@ -42,62 +42,171 @@
             </svg>
           </div>
         </div>
-        <p class="text-3xl font-bold text-white mb-2">{{stats.participantes}}</p>
+        <p class="text-3xl font-bold text-white mb-2">{{stats.total_participantes}}</p>
         <p class="text-sm text-primary-300">Miembros activos</p>
       </div>
 
-      <!-- Card Préstamos Activos -->
-      <div class="bg-black-color-900/50 rounded-xl p-6 border border-butterfly-bush-500/20 hover:border-butterfly-bush-500/50 transition-all">
+      <!-- Total Préstamos -->
+      <div class="bg-black-color-900/50 rounded-xl p-6 border border-green-500/20 hover:border-green-500/50 transition-all">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-primary-200">Préstamos Activos</h3>
-          <div class="p-2 bg-butterfly-bush-500/20 rounded-lg">
-            <svg class="w-6 h-6 text-butterfly-bush-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <h3 class="text-primary-200">Total Préstamos</h3>
+          <div class="p-2 bg-green-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-white mb-2">${{stats.total_prestamos}}</p>
+        <p class="text-sm text-primary-300">Monto total prestado</p>
+      </div>
+
+      <!-- Total Pagos -->
+      <div class="bg-black-color-900/50 rounded-xl p-6 border border-green-500/20 hover:border-green-500/50 transition-all">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-primary-200">Total Pagos</h3>
+          <div class="p-2 bg-green-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-white mb-2">${{stats.total_pagos}}</p>
+        <p class="text-sm text-primary-300">Pagos realizados</p>
+      </div>
+
+      <!-- Préstamos Pendientes -->
+      <div class="bg-black-color-900/50 rounded-xl p-6 border border-red-500/20 hover:border-red-500/50 transition-all">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-primary-200">Préstamos Pendientes</h3>
+          <div class="p-2 bg-red-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+        </div>
+        <p class="text-3xl font-bold text-white mb-2">{{stats.prestamos_pendientes}}</p>
+        <p class="text-sm text-primary-300">Por cobrar</p>
+      </div>
+
+      <!-- Intereses Generales -->
+      <div class="bg-black-color-900/50 rounded-xl p-6 border border-green-500/20 hover:border-green-500/50 transition-all">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-primary-200">Intereses</h3>
+          <div class="p-2 bg-green-500/20 rounded-lg">
+            <svg class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
           </div>
         </div>
-        <p class="text-3xl font-bold text-white mb-2">{{stats.prestamosActivos}}</p>
-        <p class="text-sm text-primary-300">Préstamos en curso</p>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-primary-300">Total Intereses</span>
+            <span class="text-2xl font-bold text-white">${{intereses[0].total_interes || 0}}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-primary-300">Por Acción</span>
+            <span class="text-lg font-medium text-green-500">${{intereses[0].interes_por_accion | number:'1.2-2'}}</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Enlaces Rápidos -->
-  <section class="px-6 py-8">
-    <div class="max-w-7xl mx-auto">
-      <h2 class="text-2xl font-bold text-white mb-6">Acciones Rápidas</h2>
-      <div class="grid gap-4 md:grid-cols-2">
-        <!-- Gestión de Participantes -->
-        <a routerLink="/participantes" 
-           class="group p-6 bg-black-color-900/50 rounded-xl border border-white/10 hover:border-primary-500 transition-all">
+  <!-- Últimas Transacciones -->
+  <section *ngIf="!loading && !error && ultimasTransacciones.length > 0" class="px-6 py-8">
+    <div class="max-w-7xl mx-auto"></div>
+      <h2 class="text-2xl font-bold text-white mb-6">Últimas Transacciones</h2>
+      <div class="bg-black-color-900/50 rounded-xl border border-white/10 divide-y divide-white/10">
+        <div *ngFor="let tx of ultimasTransacciones" class="p-4">
           <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-lg font-semibold text-white mb-2">Participantes</h3>
-              <p class="text-primary-200">{{stats.participantes}} miembros registrados</p>
+            <div class="flex items-start gap-3">
+              <div class="p-2 bg-primary-500/20 rounded-lg">
+                <svg class="w-6 h-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-white font-medium">{{tx.participante}}</p>
+                <p class="text-sm text-primary-300">{{tx.created_at | date:'dd/MM/yyyy HH:mm'}}</p>
+              </div>
             </div>
-            <div class="p-3 bg-primary-500/10 rounded-lg group-hover:bg-primary-500/20 transition-all">
-              <svg class="w-6 h-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-              </svg>
-            </div>
+            <p class="text-lg font-bold text-primary-500">${{tx.monto}}</p>
           </div>
-        </a>
+        </div>
+      </div>
+  </section>
 
-        <!-- Gestión de Préstamos -->
-        <a routerLink="/prestamos" 
-           class="group p-6 bg-black-color-900/50 rounded-xl border border-white/10 hover:border-primary-500 transition-all">
-          <div class="flex items-center justify-between">
+  <!-- Lista de Deudores -->
+  <section *ngIf="!loading && !error && deudores.length > 0" class="px-6 py-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-white">Participantes Deudores</h2>
+        <span class="px-4 py-2 bg-red-500/10 text-red-500 rounded-lg text-sm font-medium">
+          {{deudores.length}} deudores activos
+        </span>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div *ngFor="let deudor of deudores" 
+             class="bg-black-color-900/50 rounded-xl p-6 border border-red-500/10 hover:border-red-500/20 transition-all">
+          <div class="flex items-start justify-between mb-4">
             <div>
-              <h3 class="text-lg font-semibold text-white mb-2">Préstamos</h3>
-              <p class="text-primary-200">{{stats.prestamosActivos}} préstamos activos</p>
+              <h3 class="text-white font-medium mb-1">{{deudor.nombre}}</h3>
+              <div class="space-y-1">
+                <p class="text-sm text-primary-300">
+                  <span class="inline-block w-24">Préstamo:</span>
+                  <span class="text-white">${{deudor.monto_total}}</span>
+                </p>
+                <p class="text-sm text-primary-300">
+                  <span class="inline-block w-24">Pagado:</span>
+                  <span class="text-green-500">${{deudor.monto_pagado}}</span>
+                </p>
+              </div>
             </div>
-            <div class="p-3 bg-primary-500/10 rounded-lg group-hover:bg-primary-500/20 transition-all">
-              <svg class="w-6 h-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
+            <div class="px-3 py-1 bg-red-500/10 rounded-lg">
+              <span class="text-red-500 font-medium">${{deudor.monto_restante}}</span>
             </div>
           </div>
-        </a>
+          <div class="w-full bg-white/5 rounded-full h-2">
+            <div class="bg-red-500 h-2 rounded-full" 
+                 [style.width]="(deudor.monto_pagado / deudor.monto_total * 100) + '%'">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resumen de Intereses -->
+  <section *ngIf="!loading && !error && intereses.length > 0" class="px-6 py-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-white">Resumen de Intereses</h2>
+        <div class="flex gap-2">
+          <span class="px-4 py-2 bg-green-500/10 text-green-500 rounded-lg text-sm font-medium">
+            Total: ${{intereses[0].total_interes}}
+          </span>
+          <span class="px-4 py-2 bg-primary-500/10 text-primary-500 rounded-lg text-sm font-medium">
+            Por Acción: ${{intereses[0].interes_por_accion | number:'1.2-2'}}
+          </span>
+        </div>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div *ngFor="let item of intereses" 
+             class="bg-black-color-900/50 rounded-xl p-6 border border-green-500/10 hover:border-green-500/20 transition-all">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h3 class="text-white font-medium mb-1">{{item.nombre}}</h3>
+              <p class="text-sm text-primary-300">{{translateMonth(item.mes_de_pago)}}</p>
+            </div>
+            <div class="px-3 py-1 bg-green-500/10 rounded-lg">
+              <span class="text-green-500 font-medium">${{item.interes}}</span>
+            </div>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-primary-300">Préstamo base</span>
+            <span class="text-white">${{item.prestamo}}</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>

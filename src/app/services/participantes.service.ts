@@ -71,28 +71,24 @@ export class ParticipantesService {
     return this.selectedParticipanteId;
   }
 
-  obtenerPrestamosActivos() {
-    const url = `${this.environment}obtenerPrestamosActivos`;
-    return this.http.get<any>(url);
-  }
-
-  obtenerTotalPrestamos() {
-    const url = `${this.environment}obtenerTotalPrestamos`;
-    return this.http.get<any>(url);
-  }
 
   obtenerDashboardStats() {
-    const url = `${this.environment}obtenerDashboardStats`;
+    const url = `${this.environment}dashboard/stats`;
     return this.http.get<any>(url);
   }
 
   obtenerUltimasTransacciones() {
-    const url = `${this.environment}obtenerUltimasTransacciones`;
+    const url = `${this.environment}dashboard/transacciones`;
     return this.http.get<any>(url);
   }
 
   obtenerParticipantesDeudores() {
-    const url = `${this.environment}obtenerParticipantesDeudores`;
+    const url = `${this.environment}dashboard/deudores`;
+    return this.http.get<any>(url);
+  }
+
+  obtenerIntereses() {
+    const url = `${this.environment}dashboard/intereses`;
     return this.http.get<any>(url);
   }
 }
