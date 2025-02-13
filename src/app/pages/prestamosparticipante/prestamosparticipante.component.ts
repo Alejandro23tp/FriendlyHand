@@ -223,7 +223,13 @@ export class PrestamosparticipanteComponent implements OnInit {
       observaciones: this.nuevoPrestamo.observaciones
     };
     console.log(nuevoPago);
-    this.prestamoService.registrarPagosPrestamo(nuevoPago).subscribe({
+    this.prestamoService.registrarPagosPrestamo({
+      part_id: this.selectedParticipanteId,
+      semana: this.nuevoPrestamo.semana,
+      valor: this.nuevoPrestamo.valor,
+      fecha: this.nuevoPrestamo.fecha,
+      observaciones: this.nuevoPrestamo.observaciones
+    }).subscribe({
       next: (response) => {
         console.log('Pago registrado:', response);
         this.cerrarModalPagoPrestamo();
