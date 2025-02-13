@@ -216,7 +216,7 @@ export class PrestamosparticipanteComponent implements OnInit {
     }
   
     const nuevoPago = {
-      part_id: this.selectedParticipanteId,
+      prestpart_id: this.selectedParticipanteId,
       semana: this.nuevoPrestamo.semana,
       valor: this.nuevoPrestamo.valor,
       fecha: this.nuevoPrestamo.fecha,
