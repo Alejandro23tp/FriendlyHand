@@ -210,48 +210,71 @@ export class PrestamosparticipanteComponent implements OnInit {
   }
   //Registrar un pago de préstamo
   registrarPagoPrestamo(): void {
-    if (!this.nuevoPrestamo.semana || this.nuevoPrestamo.valor <= 0) {
-      this.errorMessage = 'Por favor, complete todos los campos correctamente.';
+    // Validaciones más específicas
+    if (!this.selectedParticipanteId) {
+      this.errorMessage = 'No hay participante seleccionado';
+      console.error('Error: No hay participante seleccionado');
       return;
     }
   
+    if (!this.nuevoPrestamo.semana) {
+      this.errorMessage = 'Debe seleccionar una semana';
+      console.error('Error: Semana no seleccionada');
+      return;
+    }
+  
+    const valor = parseFloat(this.nuevoPrestamo.valor);
+    if (isNaN(valor) || valor <= 0) {
+      this.errorMessage = 'El valor del pago debe ser mayor a 0';
+      console.error('Error: Valor inválido:', this.nuevoPrestamo.valor);
+      return;
+    }
+  
+    // Crear el objeto de pago asegurándose que los tipos sean correctos
     const nuevoPago = {
       part_id: this.selectedParticipanteId,
-      semana: this.nuevoPrestamo.semana,
-      valor: this.nuevoPrestamo.valor,
-      fecha: this.nuevoPrestamo.fecha,
-      observaciones: this.nuevoPrestamo.observaciones
+      semana: this.nuevoPrestamo.semana.toString(), // Asegurar que sea string
+      valor: valor, // Ya convertido a número
+      fecha: this.nuevoPrestamo.fecha || this.fechaActual,
+      observaciones: this.nuevoPrestamo.observaciones || 'Ninguna'
     };
-    console.log(nuevoPago);
-    this.prestamoService.registrarPagosPrestamo({
-      part_id: this.selectedParticipanteId,
-      semana: this.nuevoPrestamo.semana,
-      valor: this.nuevoPrestamo.valor,
-      fecha: this.nuevoPrestamo.fecha,
-      observaciones: this.nuevoPrestamo.observaciones
-    }).subscribe({
+  
+    console.log('Enviando pago:', nuevoPago);
+  
+    // Llamada al servicio con mejor manejo de errores
+    this.prestamoService.registrarPagosPrestamo(nuevoPago).subscribe({
       next: (response) => {
-        console.log('Pago registrado:', response);
+        console.log('Respuesta exitosa:', response);
+        
+        // Actualizar la UI solo si la respuesta es exitosa
         this.cerrarModalPagoPrestamo();
         
-        // Después de registrar el pago, verificar si el préstamo debe ser cancelado
+        // Recargar los pagos
         this.prestamoService.listarcuotapagosprestamos(this.selectedParticipanteId).subscribe({
           next: (pagosResponse) => {
+            console.log('Pagos actualizados:', pagosResponse);
             this.pagosFiltrados = pagosResponse.data.filter((pago: any) => 
               pago.semana === this.nuevoPrestamo.semana
             );
             this.calcularTotalPagosSemana();
             this.cargarPrestamos(this.selectedParticipanteId);
+          },
+          error: (err) => {
+            console.error('Error al actualizar pagos:', err);
+            this.errorMessage = 'Error al actualizar la lista de pagos';
           }
         });
       },
       error: (error) => {
-        console.error('Error al registrar pago:', error);
-        this.errorMessage = 'No se pudo registrar el pago.';
+        console.error('Error detallado al registrar pago:', error);
+        this.errorMessage = error.error?.message || 'No se pudo registrar el pago';
+        // Si hay un error específico del servidor, mostrarlo
+        if (error.error?.details) {
+          console.error('Detalles del error:', error.error.details);
+        }
       }
     });
   }
-  
   
 
   abrirModalNuevoPrestamo(): void {
