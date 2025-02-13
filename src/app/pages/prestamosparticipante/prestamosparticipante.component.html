@@ -231,7 +231,7 @@
                   name="semana"
                   class="w-full p-2 rounded bg-black-color-700 text-white border border-gray-700">
             <option *ngFor="let semana of semanasDeudoras" [value]="semana.id">
-              {{ semana.pp_semana }}
+              {{ semana.pp_semana }} - ${{ semana.pp_prestamo }}
             </option>
           </select>
         </div>
