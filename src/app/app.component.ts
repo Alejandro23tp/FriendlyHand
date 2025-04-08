@@ -1,26 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NgxSonnerToaster } from 'ngx-sonner';
-import { CommonModule } from '@angular/common';
-import { LoadingService } from './services/loading.service';
+import { InactivityDialogComponent } from './components/inactivity-dialog/inactivity-dialog.component';
+import { InactivityService } from './services/inactivity.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgxSonnerToaster, CommonModule],
+  imports: [RouterOutlet, NgxSonnerToaster, InactivityDialogComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="relative">
-      <router-outlet></router-outlet>
-      <ngx-sonner-toaster theme="dark" richColors />
-      
-      <!-- Global Loading -->
-      <div *ngIf="loadingService.loading$ | async" 
-           class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
-      </div>
-    </div>
+    <router-outlet></router-outlet>
+    <ngx-sonner-toaster theme="dark" richColors />
+    <app-inactivity-dialog></app-inactivity-dialog>
   `
 })
-export class AppComponent {
-  constructor(public loadingService: LoadingService) {}
+export class AppComponent implements OnInit {
+  constructor(private inactivityService: InactivityService) {}
+
+  ngOnInit() {
+    // Iniciar el timer de inactividad después de un login exitoso
+    if (localStorage.getItem('jwt_token')) {
+      this.inactivityService.setupInactivityTimer();
+    }
+  }
 }

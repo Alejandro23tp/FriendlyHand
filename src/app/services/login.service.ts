@@ -28,6 +28,7 @@ export class LoginService {
 
   logout(): void {
     const token = this.getToken();
+    
     // Limpiar datos locales primero
     localStorage.clear();
     this.currentUserSubject.next(null);

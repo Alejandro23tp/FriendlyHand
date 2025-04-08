@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ParticipantesService } from '../../services/participantes.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -52,15 +52,19 @@ export default class HomeComponent implements OnInit {
   deudores: Deudor[] = [];
   intereses: any[] = [{ total_interes: 0, interes_por_accion: 0 }]; // Inicializar con valores por defecto
   userData: any = null;
+  private completedRequests = 0;
+  private totalRequests = 4; // Total de peticiones que hacemos (stats, transacciones, deudores, intereses)
 
-  constructor(private participantesService: ParticipantesService) {
+  constructor(
+    private participantesService: ParticipantesService,
+    private cdr: ChangeDetectorRef
+  ) {
     this.loadUserData();
     this.setGreeting();
   }
 
   ngOnInit() {
     this.loadAllData();
-    this.loadDashboardData();
   }
 
   private loadUserData() {
@@ -80,55 +84,62 @@ export default class HomeComponent implements OnInit {
   private loadAllData() {
     this.loading = true;
     this.error = null;
+    this.completedRequests = 0;
+    this.cdr.detectChanges(); // Forzar detección de cambios inicial
 
-    // Cargar estadísticas del dashboard
     this.participantesService.obtenerDashboardStats().subscribe({
       next: (response) => {
         if (response?.data) {
           this.stats = response.data;
         }
+        this.checkAllRequestsComplete();
       },
       error: this.handleError.bind(this)
     });
 
-    // Cargar últimas transacciones
     this.participantesService.obtenerUltimasTransacciones().subscribe({
       next: (response) => {
         if (response?.data) {
           this.ultimasTransacciones = response.data;
         }
+        this.checkAllRequestsComplete();
       },
       error: this.handleError.bind(this)
     });
 
-    // Cargar deudores
     this.participantesService.obtenerParticipantesDeudores().subscribe({
       next: (response) => {
         if (response?.data) {
           this.deudores = response.data;
         }
+        this.checkAllRequestsComplete();
       },
       error: this.handleError.bind(this)
     });
 
-    // Cargar intereses
     this.participantesService.obtenerIntereses().subscribe({
       next: (response) => {
         if (response?.data) {
           this.intereses = response.data;
         }
+        this.checkAllRequestsComplete();
       },
-      error: this.handleError.bind(this),
-      complete: () => {
-        this.loading = false;
-      }
+      error: this.handleError.bind(this)
     });
+  }
+
+  private checkAllRequestsComplete() {
+    this.completedRequests++;
+    if (this.completedRequests === this.totalRequests) {
+      this.loading = false;
+      this.cdr.detectChanges(); // Forzar detección de cambios
+    }
   }
 
   private handleError(error: any) {
     console.error('Error:', error);
     this.error = 'Error al cargar los datos';
-    this.loading = false;
+    this.checkAllRequestsComplete();
   }
 
   // Agregar método para traducir mes
@@ -152,17 +163,5 @@ export default class HomeComponent implements OnInit {
 
     const mesLimpio = month.trim();
     return months[mesLimpio] || mesLimpio;
-  }
-
-  private loadDashboardData() {
-    this.participantesService.obtenerIntereses().subscribe({
-      next: (data) => {
-        this.intereses = data.length > 0 ? data : [{ total_interes: 0, interes_por_accion: 0 }];
-      },
-      error: (error) => {
-        console.error('Error loading intereses:', error);
-        this.intereses = [{ total_interes: 0, interes_por_accion: 0 }];
-      }
-    });
   }
 }

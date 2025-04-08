@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginService } from '../../services/login.service';
 import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import { CommonModule } from '@angular/common';
+import { finalize } from 'rxjs/operators';
+import { InactivityService } from '../../services/inactivity.service';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +13,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export default class LoginComponent {
+export default class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errorMessage: string = '';
   isLoading: boolean = false;
@@ -20,6 +22,8 @@ export default class LoginComponent {
     private fb: FormBuilder,
     private router: Router,
     private loginService: LoginService,
+    private cdr: ChangeDetectorRef,
+    private inactivityService: InactivityService
   ) {
     this.loginForm = this.fb.group({
       usr_usuario: ['', [Validators.required]], // Cambiado de usr_correo a usr_usuario
@@ -28,40 +32,35 @@ export default class LoginComponent {
     });
   }
 
-  async onLogin() {
+  onLogin() {
     if (this.loginForm.valid) {
+      // Set loading before async operation
       this.isLoading = true;
       const loginData = this.loginForm.value;
 
-      this.loginService.login(loginData).subscribe({
-        next: (response) => {
+      this.loginService.login(loginData).pipe(
+        finalize(() => {
           this.isLoading = false;
-          toast.success('¡Bienvenido!', {
-            description: 'Inicio de sesión exitoso'
-          });
-          this.errorMessage = '';
-          // Guardar información del usuario
+          this.cdr.markForCheck();
+        })
+      ).subscribe({
+        next: (response) => {
           localStorage.setItem('userData', JSON.stringify(response.user));
-
           if (loginData.rememberMe) {
-            localStorage.setItem('usr_usuario', loginData.usr_usuario); // Cambiado de usr_correo a usr_usuario
+            localStorage.setItem('usr_usuario', loginData.usr_usuario);
           } else {
-            localStorage.removeItem('usr_usuario'); // Cambiado de usr_correo a usr_usuario
+            localStorage.removeItem('usr_usuario');
           }
-
+          toast.success('Ingreso Exitoso');
+          this.inactivityService.setupInactivityTimer(); // Iniciar timer después del login
           this.router.navigate(['/home']);
         },
         error: (error) => {
-          this.isLoading = false;
-          toast.error('Error de autenticación', {
-            description: error.error?.message || 'Credenciales incorrectas'
-          });
+          toast.error(error.error?.message || 'Credenciales incorrectas');
         }
       });
     } else {
-      toast.error('Campos incompletos', {
-        description: 'Por favor, complete todos los campos correctamente'
-      });
+      toast.error('Por favor, complete los campos correctamente.');
     }
   }
 

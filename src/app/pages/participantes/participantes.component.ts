@@ -63,7 +63,7 @@ export default class ParticipantesComponent implements OnInit {
     this.loading = true;
     this.participantesService.listarParticipantes().subscribe({
       next: (response: ParticipantesResponse) => {
-        this.participantes = response.data;
+        this.participantes = response.data.sort((a, b) => a.id - b.id);
         this.loading = false;
       },
       error: (error) => {
@@ -93,7 +93,7 @@ export default class ParticipantesComponent implements OnInit {
             toast.success('Participante actualizado', {
               description: 'Los datos se han guardado correctamente'
             });
-            this.cargarParticipantes();
+            this.cargarParticipantes(); // Esto recargará y ordenará los participantes
             this.editingParticipante = null;
           },
           error: (error) => {
