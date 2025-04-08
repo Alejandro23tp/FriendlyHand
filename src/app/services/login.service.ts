@@ -27,19 +27,35 @@ export class LoginService {
   }
 
   logout(): void {
-    localStorage.clear(); // Limpiar todo el localStorage
+    const token = this.getToken();
+    // Limpiar datos locales primero
+    localStorage.clear();
     this.currentUserSubject.next(null);
-    // No necesitamos esperar la respuesta del servidor para redireccionar
-    this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe();
+
+    // Solo intentar logout en el servidor si hay un token válido
+    if (token && this.isAuthenticated()) {
+      this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe({
+        error: () => {
+          console.log('Error en logout pero sesión ya cerrada localmente');
+        }
+      });
+    }
   }
 
   refreshToken(): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}auth/refresh`, {})
-      .pipe(
-        tap(response => {
+    const token = this.getToken();
+    return this.http.post<LoginResponse>(`${this.apiUrl}auth/refresh`, {}, {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      })
+    }).pipe(
+      tap(response => {
+        if (response.access_token) {
           localStorage.setItem('jwt_token', response.access_token);
-        })
-      );
+          this.currentUserSubject.next(response.user);
+        }
+      })
+    );
   }
 
   checkToken() {

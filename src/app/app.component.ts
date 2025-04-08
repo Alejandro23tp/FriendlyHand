@@ -1,19 +1,21 @@
-import { Component } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { initFlowbite } from 'flowbite';
-import { NgxSonnerToaster } from 'ngx-sonner';
+import { InactivityDialogComponent } from './components/inactivity-dialog/inactivity-dialog.component';
+import { InactivityService } from './services/inactivity.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NgxSonnerToaster],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  standalone: true,
+  imports: [RouterOutlet, InactivityDialogComponent],
+  template: `
+    <router-outlet></router-outlet>
+    <app-inactivity-dialog></app-inactivity-dialog>
+  `
 })
-export class AppComponent {
-  title = 'ManoAmiga';
+export class AppComponent implements OnInit {
+  constructor(private inactivityService: InactivityService) {}
 
-  ngOnInit(): void {
-    initFlowbite();
+  ngOnInit() {
+    this.inactivityService.setupInactivityTimer();
   }
 }
