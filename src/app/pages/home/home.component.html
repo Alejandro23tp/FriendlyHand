@@ -6,7 +6,7 @@
         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
           <div class="text-center md:text-left space-y-2">
             <h1 class="text-3xl md:text-4xl font-bold text-white">
-              {{greeting}}, {{userData?.usr_nombre || 'Usuario'}}! 👋
+              {{greeting}}, {{userData?.usr_usuario || 'Usuario'}}! 👋
             </h1>
             <p class="text-primary-200">
               Panel de Control - Banco Mano Amiga
@@ -101,11 +101,11 @@
         <div class="space-y-2">
           <div class="flex justify-between items-center">
             <span class="text-primary-300">Total Intereses</span>
-            <span class="text-2xl font-bold text-white">${{intereses[0].total_interes || 0}}</span>
+            <span class="text-2xl font-bold text-white">${{intereses[0]?.total_interes || 0}}</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-primary-300">Por Acción</span>
-            <span class="text-lg font-medium text-green-500">${{intereses[0].interes_por_accion | number:'1.2-2'}}</span>
+            <span class="text-lg font-medium text-green-500">${{intereses[0]?.interes_por_accion || 0 | number:'1.2-2'}}</span>
           </div>
         </div>
       </div>
@@ -196,7 +196,7 @@
           <div class="flex items-start justify-between mb-4">
             <div>
               <h3 class="text-white font-medium mb-1">{{item.nombre}}</h3>
-              <p class="text-sm text-primary-300">{{translateMonth(item.mes_de_pago)}}</p>
+              <p class="text-sm text-primary-300">{{translateMonth(item?.mes_de_pago || '')}}</p>
             </div>
             <div class="px-3 py-1 bg-green-500/10 rounded-lg">
               <span class="text-green-500 font-medium">${{item.interes}}</span>

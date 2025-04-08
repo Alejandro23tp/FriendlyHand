@@ -120,7 +120,7 @@ export class SemanasparticipanteComponent implements OnInit {
       semana: `Semana ${this.nuevoPago.semana}`,
       valor: this.nuevoPago.valor,
       fecha: this.nuevoPago.fecha,
-      responsable: this.loginService.getUsserId(),
+      responsable: this.loginService.getUserId(), // Actualizado de getUsserId a getUserId
       inicioSemana: this.nuevoPago.inicioSemana
     };
 

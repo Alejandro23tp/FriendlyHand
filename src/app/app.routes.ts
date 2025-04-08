@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 import { SemanasparticipanteComponent } from './pages/semanasparticipante/semanasparticipante.component';
 import { PrestamosparticipanteComponent } from './pages/prestamosparticipante/prestamosparticipante.component';
 import pagesRoutes from './pages/pages.routes';
@@ -24,6 +25,8 @@ export const routes: Routes = [
     },
     {
         path: '',
+        canActivate: [authGuard],
+        canActivateChild: [authGuard],
         component: LayoutComponent,
         children: [
             {
@@ -63,7 +66,10 @@ export const routes: Routes = [
             // Aquí puedes agregar más rutas hijas que compartirán el layout
         ]
     },
-    
+    {
+        path: '**',
+        redirectTo: 'login'
+    }
 ];
 
 export default routes;

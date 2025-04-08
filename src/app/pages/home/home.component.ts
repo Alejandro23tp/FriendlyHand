@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ParticipantesService } from '../../services/participantes.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -43,14 +43,14 @@ interface Interes {
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export default class HomeComponent {
+export default class HomeComponent implements OnInit {
   greeting: string = '';
   loading: boolean = false;
   error: string | null = null;
   stats!: DashboardStats;
   ultimasTransacciones: Transaccion[] = [];
   deudores: Deudor[] = [];
-  intereses: Interes[] = [];
+  intereses: any[] = [{ total_interes: 0, interes_por_accion: 0 }]; // Inicializar con valores por defecto
   userData: any = null;
 
   constructor(private participantesService: ParticipantesService) {
@@ -60,6 +60,7 @@ export default class HomeComponent {
 
   ngOnInit() {
     this.loadAllData();
+    this.loadDashboardData();
   }
 
   private loadUserData() {
@@ -131,7 +132,9 @@ export default class HomeComponent {
   }
 
   // Agregar método para traducir mes
-  translateMonth(month: string): string {
+  translateMonth(month: string | undefined): string {
+    if (!month) return '';
+    
     const months: { [key: string]: string } = {
       'January': 'Enero',
       'February': 'Febrero',
@@ -146,7 +149,20 @@ export default class HomeComponent {
       'November': 'Noviembre',
       'December': 'Diciembre'
     };
-    
-    return months[month.trim()] || month;
+
+    const mesLimpio = month.trim();
+    return months[mesLimpio] || mesLimpio;
+  }
+
+  private loadDashboardData() {
+    this.participantesService.obtenerIntereses().subscribe({
+      next: (data) => {
+        this.intereses = data.length > 0 ? data : [{ total_interes: 0, interes_por_accion: 0 }];
+      },
+      error: (error) => {
+        console.error('Error loading intereses:', error);
+        this.intereses = [{ total_interes: 0, interes_por_accion: 0 }];
+      }
+    });
   }
 }

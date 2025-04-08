@@ -22,7 +22,7 @@ export default class LoginComponent {
     private loginService: LoginService,
   ) {
     this.loginForm = this.fb.group({
-      usr_correo: ['', [Validators.required, Validators.email]],
+      usr_usuario: ['', [Validators.required]], // Cambiado de usr_correo a usr_usuario
       password: ['', [Validators.required, Validators.minLength(6)]],
       rememberMe: [false]
     });
@@ -33,41 +33,36 @@ export default class LoginComponent {
       this.isLoading = true;
       const loginData = this.loginForm.value;
 
-      this.loginService.login(loginData).subscribe(
-        (response) => {
+      this.loginService.login(loginData).subscribe({
+        next: (response) => {
           this.isLoading = false;
-          if (response.cant === 1) {
-            this.errorMessage = '';
-            this.loginService.setUsrId(response.data.usr_usuario);
-            toast.success('Ingreso Exitoso');
+          this.errorMessage = '';
+          // Guardar información del usuario
+          localStorage.setItem('userData', JSON.stringify(response.user));
+          toast.success('Ingreso Exitoso');
 
-            // Guardar el correo electrónico en localStorage si la casilla "Recordarme" está marcada
-            if (loginData.rememberMe) {
-              localStorage.setItem('usr_correo', loginData.usr_correo);
-            } else {
-              localStorage.removeItem('usr_correo');
-            }
-
-            this.router.navigate(['/home']); // Redirigir a la página principal
+          if (loginData.rememberMe) {
+            localStorage.setItem('usr_usuario', loginData.usr_usuario); // Cambiado de usr_correo a usr_usuario
           } else {
-            toast.error(response.mensaje || 'Credenciales incorrectas');
+            localStorage.removeItem('usr_usuario'); // Cambiado de usr_correo a usr_usuario
           }
+
+          this.router.navigate(['/home']);
         },
-        (error) => {
+        error: (error) => {
           this.isLoading = false;
-          toast.error('Ha ocurrido un error. Por favor, inténtelo de nuevo.');
+          toast.error(error.error?.message || 'Credenciales incorrectas');
         }
-      );
+      });
     } else {
       toast.error('Por favor, complete los campos correctamente.');
     }
   }
 
   ngOnInit() {
-    // Cargar el correo electrónico guardado en localStorage si existe
-    const savedEmail = localStorage.getItem('usr_correo');
-    if (savedEmail) {
-      this.loginForm.patchValue({ usr_correo: savedEmail, rememberMe: true });
+    const savedUsername = localStorage.getItem('usr_usuario'); // Cambiado de usr_correo a usr_usuario
+    if (savedUsername) {
+      this.loginForm.patchValue({ usr_usuario: savedUsername, rememberMe: true }); // Cambiado de usr_correo a usr_usuario
     }
   }
 }

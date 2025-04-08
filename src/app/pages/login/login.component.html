@@ -13,8 +13,8 @@
             <!-- Formulario de inicio de sesión -->
             <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
                 <div class="mb-6">
-                    <label for="email" class="block text-white">Correo electrónico</label>
-                    <input type="email" id="email" class="w-full p-4 bg-transparent text-white border border-white rounded-xl mt-2" placeholder="Introduce tu correo" formControlName="usr_correo">
+                    <label for="usr_usuario" class="block text-white">Usuario</label>
+                    <input type="text" id="usr_usuario" class="w-full p-4 bg-transparent text-white border border-white rounded-xl mt-2" placeholder="Introduce tu usuario" formControlName="usr_usuario">
                 </div>
                 <div class="mb-6">
                     <label for="password" class="block text-white">Contraseña</label>
