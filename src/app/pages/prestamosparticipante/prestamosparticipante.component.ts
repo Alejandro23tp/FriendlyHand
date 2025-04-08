@@ -4,8 +4,8 @@ import { PrestamosService } from '../../services/prestamos.service';
 import { ParticipantesService } from '../../services/participantes.service';
 import { CommonModule, formatDate } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-
+import { toast } from 'ngx-sonner';
+import { finalize } from 'rxjs/operators';
 @Component({
   selector: 'app-prestamosparticipante',
   imports: [CommonModule, FormsModule],
@@ -23,6 +23,8 @@ export class PrestamosparticipanteComponent implements OnInit {
   fechaActual: string = '';
   showPagoPrestamoModal: boolean = false;
   showNuevoPrestamoModal: boolean = false;
+  isLoadingSubmit: boolean = false;
+  isLoadingPagoPrestamo: boolean = false;
   nuevoPrestamo: any = {};
   defaultInterest: number = 5;
   semanas: string[] = [];
@@ -181,7 +183,9 @@ export class PrestamosparticipanteComponent implements OnInit {
 
   abrirModalPagoPrestamo(): void {
     if (!this.selectedParticipanteId) {
-      this.errorMessage = 'Por favor, seleccione un participante.';
+      toast.error('Error', {
+        description: 'Por favor, seleccione un participante'
+      });
       return;
     }
     
@@ -199,36 +203,36 @@ export class PrestamosparticipanteComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar semanas deudoras:', error);
-        this.errorMessage = 'No se pudieron cargar las semanas deudoras.';
+        toast.error('Error', {
+          description: 'No se pudieron cargar las semanas deudoras'
+        });
       }
     });
   }
-
   cerrarModalPagoPrestamo(): void {
     this.showPagoPrestamoModal = false;
     this.limpiarCamposPagoPrestamo(); // Limpiar campos
   }
   //Registrar un pago de préstamo
   registrarPagoPrestamo(): void {
-    console.log('Datos del nuevo prestamo:', this.nuevoPrestamo); // Log inicial
-
     if (!this.nuevoPrestamo.semana || this.nuevoPrestamo.valor <= 0) {
-      this.errorMessage = 'Por favor, complete todos los campos correctamente.';
+      toast.error('Campos incompletos', {
+        description: 'Por favor, complete todos los campos correctamente'
+      });
       return;
     }
   
+    this.isLoadingPagoPrestamo = true;
     // Obtenemos el préstamo seleccionado de semanasDeudoras
     const prestamoSeleccionado = this.semanasDeudoras.find(
       p => p.id.toString() === this.nuevoPrestamo.semana.toString()
     );
   
-    console.log('Semanas deudoras disponibles:', this.semanasDeudoras); // Log de semanas deudoras
-    console.log('ID buscado:', this.nuevoPrestamo.semana); // Log del ID que estamos buscando
-    console.log('Préstamo seleccionado:', prestamoSeleccionado); // Log del préstamo encontrado
-  
     if (!prestamoSeleccionado) {
-      console.error('No se encontró el préstamo con ID:', this.nuevoPrestamo.semana);
-      this.errorMessage = 'Préstamo no encontrado.';
+      toast.error('Error', {
+        description: 'Préstamo no encontrado'
+      });
+      this.isLoadingPagoPrestamo = false;
       return;
     }
   
@@ -240,36 +244,41 @@ export class PrestamosparticipanteComponent implements OnInit {
       observaciones: this.nuevoPrestamo.observaciones
     };
   
-    console.log('Datos del pago a registrar:', nuevoPago); // Log final
-  
-    this.prestamoService.registrarPagosPrestamo(nuevoPago).subscribe({
-      next: (response) => {
-        console.log('Respuesta del registro de pago:', response);
-        this.cerrarModalPagoPrestamo();
-        
-        this.prestamoService.listarcuotapagosprestamos(this.selectedParticipanteId).subscribe({
-          next: (pagosResponse) => {
-            console.log('Respuesta de pagos:', pagosResponse);
-            this.pagosFiltrados = pagosResponse.data.filter((pago: any) => 
-              pago.semana === nuevoPago.semana
-            );
-            this.calcularTotalPagosSemana();
-            this.cargarPrestamos(this.selectedParticipanteId);
-          }
-        });
-      },
-      error: (error) => {
-        console.error('Error al registrar pago:', error);
-        this.errorMessage = 'No se pudo registrar el pago.';
-      }
-    });
+    this.prestamoService.registrarPagosPrestamo(nuevoPago)
+      .pipe(finalize(() => this.isLoadingPagoPrestamo = false))
+      .subscribe({
+        next: () => {
+          toast.success('Pago registrado', {
+            description: 'El pago se ha registrado correctamente'
+          });
+          this.cerrarModalPagoPrestamo();
+          
+          this.prestamoService.listarcuotapagosprestamos(this.selectedParticipanteId).subscribe({
+            next: (pagosResponse) => {
+              this.pagosFiltrados = pagosResponse.data.filter((pago: any) => 
+                pago.semana === nuevoPago.semana
+              );
+              this.calcularTotalPagosSemana();
+              this.cargarPrestamos(this.selectedParticipanteId);
+            }
+          });
+        },
+        error: (error) => {
+          console.error('Error al registrar pago:', error);
+          toast.error('Error al registrar', {
+            description: error.error?.message || 'No se pudo registrar el pago'
+          });
+        }
+      });
   }
   
   
 
   abrirModalNuevoPrestamo(): void {
     if (!this.selectedParticipanteId) {
-      this.errorMessage = 'Por favor, seleccione un participante.';
+      toast.error('Error', {
+        description: 'Por favor, seleccione un participante'
+      });
       return;
     }
 
@@ -308,6 +317,7 @@ export class PrestamosparticipanteComponent implements OnInit {
       return; // Detener si la validación falla
     }
 
+    this.isLoadingSubmit = true;
     const nuevoPrestamo = {
       part_id: this.prestamoData.part_id, // Usar el ID del participante
       semana: this.prestamoData.semana,
@@ -316,33 +326,43 @@ export class PrestamosparticipanteComponent implements OnInit {
       estado: 'Pendiente', // Estado por defecto
       fecha: this.prestamoData.prestamofecha,
     };
-
-    this.prestamoService.registrarPrestamo(nuevoPrestamo).subscribe({
-      next: (response) => {
-       //   console.log('Nuevo préstamo registrado:', response);
-        this.cerrarModalNuevoPrestamo();
-        this.cargarPrestamos(this.selectedParticipanteId); // Recargar los préstamos del participante
-      },
-      error: (error) => {
-       //   console.error('Error al registrar nuevo préstamo:', error);
-        this.errorMessage = 'No se pudo registrar el nuevo préstamo.';
-      }
-    });
+    this.prestamoService.registrarPrestamo(nuevoPrestamo)
+      .pipe(finalize(() => this.isLoadingSubmit = false))
+      .subscribe({
+        next: (response) => {
+          toast.success('Préstamo registrado', {
+            description: 'El préstamo se ha registrado correctamente'
+          });
+          this.cerrarModalNuevoPrestamo();
+          this.cargarPrestamos(this.selectedParticipanteId); // Recargar los préstamos del participante
+        },
+        error: (error) => {
+          console.error('Error al registrar nuevo préstamo:', error);
+          toast.error('Error al registrar', {
+            description: error.error?.message || 'No se pudo registrar el préstamo'
+          });
+        }
+      });
   }
-
   validarDatosNuevoPrestamo(): boolean {
     if (!this.prestamoData.semana || !this.prestamoData.prestamo || !this.prestamoData.interes) {
-      this.errorMessage = 'Por favor, complete todos los campos requeridos.';
+      toast.error('Campos incompletos', {
+        description: 'Por favor, complete todos los campos requeridos'
+      });
       return false;
     }
 
     if (isNaN(parseFloat(this.prestamoData.prestamo))) {
-      this.errorMessage = 'El valor del préstamo debe ser un número válido.';
+      toast.error('Valor inválido', {
+        description: 'El valor del préstamo debe ser un número válido'
+      });
       return false;
     }
 
     if (isNaN(parseFloat(this.prestamoData.interes))) {
-      this.errorMessage = 'El valor del interés debe ser un número válido.';
+      toast.error('Valor inválido', {
+        description: 'El valor del interés debe ser un número válido'
+      });
       return false;
     }
 
@@ -435,20 +455,21 @@ abrirModalPagos(prestpart_id: string, semana: string): void {
     if (!this.prestamoActual) return;
     
     const totalPrestamo = parseFloat(this.prestamoActual.prestamo) + parseFloat(this.prestamoActual.interes);
-    console.log('Total del préstamo (préstamo + interés):', totalPrestamo);
-    console.log('Total pagado:', this.totalPagosSemana);
-      console.log('Semana a verificar:', this.prestamoActual.semana);
 
     if (this.totalPagosSemana >= totalPrestamo && this.prestamoActual.estado !== 'Cancelado') {
-       console.log('El préstamo ha sido completamente pagado, actualizando estado...');
       this.prestamoService.cancelarPrestamo(this.selectedParticipanteId, this.prestamoActual.semana)
         .subscribe({
-          next: (response) => {
-             console.log('Préstamo marcado como cancelado:', response);
+          next: () => {
+            toast.success('Préstamo cancelado', {
+              description: 'El préstamo ha sido marcado como cancelado correctamente'
+            });
             this.cargarPrestamos(this.selectedParticipanteId); // Recargar los préstamos
           },
           error: (error) => {
-           console.error('Error al cancelar el préstamo:', error);
+            console.error('Error al cancelar el préstamo:', error);
+            toast.error('Error al cancelar', {
+              description: error.error?.message || 'No se pudo cancelar el préstamo'
+            });
           }
         });
     }

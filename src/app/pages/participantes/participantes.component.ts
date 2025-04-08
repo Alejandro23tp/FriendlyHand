@@ -26,6 +26,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ParticipantesService } from '../../services/participantes.service';
 import { FormsModule } from '@angular/forms';  // Asegúrate de tener esta importación
+import { toast } from 'ngx-sonner';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-participantes',
@@ -49,6 +51,7 @@ export default class ParticipantesComponent implements OnInit {
   loading: boolean = true;
   error: string | null = null;
   editingParticipante: ParticipanteForm | null = null;
+  isLoading: boolean = false;
 
   constructor(private participantesService: ParticipantesService) {}
 
@@ -82,16 +85,24 @@ export default class ParticipantesComponent implements OnInit {
 
   guardarEdicion() {
     if (this.editingParticipante) {
-      this.participantesService.actualizarParticipante(this.editingParticipante).subscribe({
-        next: () => {
-          this.cargarParticipantes();
-          this.editingParticipante = null;
-        },
-        error: (error) => {
-          console.error('Error al actualizar:', error);
-          // Aquí podrías agregar un mensaje de error para el usuario
-        }
-      });
+      this.isLoading = true;
+      this.participantesService.actualizarParticipante(this.editingParticipante)
+        .pipe(finalize(() => this.isLoading = false))
+        .subscribe({
+          next: () => {
+            toast.success('Participante actualizado', {
+              description: 'Los datos se han guardado correctamente'
+            });
+            this.cargarParticipantes();
+            this.editingParticipante = null;
+          },
+          error: (error) => {
+            console.error('Error al actualizar:', error);
+            toast.error('Error al actualizar', {
+              description: error.error?.message || 'No se pudo actualizar el participante'
+            });
+          }
+        });
     }
   }
 
@@ -116,16 +127,24 @@ cerrarModalRegistro() {
 
 registrarParticipante(event: Event) {
   event.preventDefault();
+  this.isLoading = true;
   
-  this.participantesService.registrarParticipante(this.nuevoParticipante).subscribe({
-    next: () => {
-      this.cargarParticipantes();
-      this.cerrarModalRegistro();
-    },
-    error: (error) => {
-      console.error('Error al registrar:', error);
-      // Aquí podrías agregar un mensaje de error para el usuario
-    }
+  this.participantesService.registrarParticipante(this.nuevoParticipante)
+    .pipe(finalize(() => this.isLoading = false))
+    .subscribe({
+      next: () => {
+        toast.success('Participante registrado', {
+          description: 'El participante se ha registrado correctamente'
+        });
+        this.cargarParticipantes();
+        this.cerrarModalRegistro();
+      },
+      error: (error) => {
+        console.error('Error al registrar:', error);
+        toast.error('Error al registrar', {
+          description: error.error?.message || 'No se pudo registrar el participante'
+        });
+      }
     });
   }
 }

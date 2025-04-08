@@ -5,6 +5,8 @@ import { LoginService } from '../../services/login.service';
 import { formatDate } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { toast } from 'ngx-sonner';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-semanasparticipante',
@@ -19,6 +21,7 @@ export class SemanasparticipanteComponent implements OnInit {
   selectedParticipanteId: string = '';
   selectedParticipante: any = null;
   isLoading: boolean = false;
+  isLoadingPago: boolean = false;
   errorMessage: string = '';
   showRegistroModal: boolean = false;
   nuevoPago: any = {};
@@ -114,6 +117,7 @@ export class SemanasparticipanteComponent implements OnInit {
   }
 
   registrarPago(): void {
+    this.isLoadingPago = true;
     this.nuevoPago.inicioSemana = this.calcularInicioSemana(this.nuevoPago.semana);
     const pagoData = {
       part_id: this.selectedParticipanteId,
@@ -124,16 +128,24 @@ export class SemanasparticipanteComponent implements OnInit {
       inicioSemana: this.nuevoPago.inicioSemana
     };
 
-    this.semanasService.registrarPagoSemanal(pagoData).subscribe({
-      next: (response) => {
-        console.log('Pago registrado:', response);
-        this.cerrarModalRegistro();
-        this.cargarSemanas(this.selectedParticipanteId);
-      },
-      error: (error) => {
-        console.error('Error al registrar el pago:', error);
-      }
-    });
+    this.semanasService.registrarPagoSemanal(pagoData)
+      .pipe(finalize(() => this.isLoadingPago = false))
+      .subscribe({
+        next: (response) => {
+          console.log('Pago registrado:', response);
+          toast.success('Pago registrado', {
+            description: 'El pago semanal se ha registrado correctamente'
+          });
+          this.cerrarModalRegistro();
+          this.cargarSemanas(this.selectedParticipanteId);
+        },
+        error: (error) => {
+          console.error('Error al registrar el pago:', error);
+          toast.error('Error al registrar', {
+            description: error.error?.message || 'No se pudo registrar el pago'
+          });
+        }
+      });
   }
 
   calcularInicioSemana(numeroSemana: number): string | null {
