@@ -36,10 +36,12 @@ export default class LoginComponent {
       this.loginService.login(loginData).subscribe({
         next: (response) => {
           this.isLoading = false;
+          toast.success('¡Bienvenido!', {
+            description: 'Inicio de sesión exitoso'
+          });
           this.errorMessage = '';
           // Guardar información del usuario
           localStorage.setItem('userData', JSON.stringify(response.user));
-          toast.success('Ingreso Exitoso');
 
           if (loginData.rememberMe) {
             localStorage.setItem('usr_usuario', loginData.usr_usuario); // Cambiado de usr_correo a usr_usuario
@@ -51,11 +53,15 @@ export default class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
-          toast.error(error.error?.message || 'Credenciales incorrectas');
+          toast.error('Error de autenticación', {
+            description: error.error?.message || 'Credenciales incorrectas'
+          });
         }
       });
     } else {
-      toast.error('Por favor, complete los campos correctamente.');
+      toast.error('Campos incompletos', {
+        description: 'Por favor, complete todos los campos correctamente'
+      });
     }
   }
 

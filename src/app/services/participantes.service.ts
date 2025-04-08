@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { finalize } from 'rxjs/operators';
+import { LoadingService } from './loading.service';
+import { toast } from 'ngx-sonner';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +12,8 @@ export class ParticipantesService {
   private environment = environment.apibank
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private loadingService: LoadingService
   ) { }
 
   listarParticipantes() {
@@ -19,6 +23,7 @@ export class ParticipantesService {
 
   registrarParticipante(participante: any) {    
     const url = `${this.environment}participantes/mutate`;
+    this.loadingService.show();
     return this.http.post(url, {
       mutate: [
         {
@@ -30,7 +35,14 @@ export class ParticipantesService {
           },
         },
       ],
-    });
+    }).pipe(
+      finalize(() => {
+        this.loadingService.hide();
+        toast.success('¡Éxito!', {
+          description: 'Participante registrado correctamente'
+        });
+      })
+    );
   }
 
   
@@ -83,8 +95,11 @@ export class ParticipantesService {
   }
 
   obtenerParticipantesDeudores() {
+    this.loadingService.show();
     const url = `${this.environment}dashboard/deudores`;
-    return this.http.get<any>(url);
+    return this.http.get<any>(url).pipe(
+      finalize(() => this.loadingService.hide())
+    );
   }
 
   obtenerIntereses() {
