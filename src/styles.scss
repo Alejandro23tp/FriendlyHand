@@ -3,3 +3,62 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* Estilo para el toggle switch de "Recordarme" */
+#rememberMe:checked + .toggle-label .toggle-dot {
+    transform: translateX(100%);
+}
+
+#rememberMe:checked + .toggle-label {
+    background-color: rgba(14, 165, 233, 0.7);
+}
+
+.toggle-label {
+    transition: background-color 0.3s ease;
+}
+
+/* Animación para los elementos del fondo */
+@keyframes floatCircle {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(15px, -15px); }
+    100% { transform: translate(0, 0); }
+}
+
+@keyframes pulseGlow {
+    0% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.4; }
+}
+
+.absolute.top-0.left-0.w-96 {
+    animation: floatCircle 15s ease-in-out infinite;
+}
+
+.absolute.bottom-0.right-0.w-96 {
+    animation: floatCircle 18s ease-in-out infinite reverse;
+}
+
+.absolute.top-1\/4.left-1\/4,
+.absolute.top-1\/3.right-1\/4,
+.absolute.bottom-1\/4.left-1\/3,
+.absolute.top-2\/3.right-1\/3,
+.absolute.bottom-1\/3.right-1\/5 {
+    animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.absolute.top-1\/3.right-1\/4 {
+    animation-delay: 1s;
+}
+
+.absolute.bottom-1\/4.left-1\/3 {
+    animation-delay: 2s;
+}
+
+.absolute.top-2\/3.right-1\/3 {
+    animation-delay: 0.5s;
+}
+
+.absolute.bottom-1\/3.right-1\/5 {
+    animation-delay: 1.5s;
+}

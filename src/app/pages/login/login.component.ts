@@ -34,25 +34,25 @@ export default class LoginComponent implements OnInit {
 
   onLogin() {
     if (this.loginForm.valid) {
-      // Set loading before async operation
       this.isLoading = true;
       const loginData = this.loginForm.value;
 
       this.loginService.login(loginData).pipe(
-        finalize(() => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        })
+        finalize(() => this.isLoading = false)
       ).subscribe({
         next: (response) => {
-          localStorage.setItem('userData', JSON.stringify(response.user));
+          // Manejar recordar usuario
           if (loginData.rememberMe) {
-            localStorage.setItem('usr_usuario', loginData.usr_usuario);
+            localStorage.setItem('remembered_user', loginData.usr_usuario);
           } else {
-            localStorage.removeItem('usr_usuario');
+            localStorage.removeItem('remembered_user');
           }
+
+          localStorage.setItem('userData', JSON.stringify(response.user));
+          localStorage.setItem('jwt_token', response.access_token);
+          
           toast.success('Ingreso Exitoso');
-          this.inactivityService.setupInactivityTimer(); // Iniciar timer después del login
+          this.inactivityService.setupInactivityTimer();
           this.router.navigate(['/home']);
         },
         error: (error) => {
@@ -65,9 +65,12 @@ export default class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    const savedUsername = localStorage.getItem('usr_usuario'); // Cambiado de usr_correo a usr_usuario
-    if (savedUsername) {
-      this.loginForm.patchValue({ usr_usuario: savedUsername, rememberMe: true }); // Cambiado de usr_correo a usr_usuario
+    const rememberedUser = localStorage.getItem('remembered_user');
+    if (rememberedUser) {
+      this.loginForm.patchValue({
+        usr_usuario: rememberedUser,
+        rememberMe: true
+      });
     }
   }
 }

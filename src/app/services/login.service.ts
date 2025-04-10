@@ -33,16 +33,21 @@ export class LoginService {
   }
 
   logout(): void {
-    const token = this.getToken();
+    const shouldRemember = localStorage.getItem('remembered_user') !== null;
+    const rememberedUser = localStorage.getItem('remembered_user');
     
-    // Limpiar datos locales primero
     localStorage.clear();
     this.currentUserSubject.next(null);
 
-    // Navegar a login después de limpiar
+    // Restaurar usuario recordado si existe
+    if (shouldRemember && rememberedUser) {
+      localStorage.setItem('remembered_user', rememberedUser);
+    }
+
     this.router.navigate(['/login']);
 
     // Intentar logout en el servidor si hay token
+    const token = this.getToken();
     if (token) {
       this.http.post(`${this.apiUrl}auth/logout`, {}, {
         headers: new HttpHeaders({
