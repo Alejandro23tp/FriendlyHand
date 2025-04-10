@@ -1,0 +1,64 @@
+<div [formGroup]="parentForm">
+  <!-- Usuario -->
+  <div class="mb-6">
+    <label [for]="formPrefix + 'login'" [class]="isAdminView ? 'text-citron-200' : 'text-primary-200'" class="block font-medium mb-2">
+      Usuario o Correo
+    </label>
+    <input 
+      type="text"
+      [id]="formPrefix + 'login'"
+      [class]="isAdminView ? 
+        'border-citron-500/30 focus:border-citron-500 focus:ring-citron-500/50' : 
+        'border-primary-500/30 focus:border-primary-500 focus:ring-primary-500/50'"
+      class="w-full p-4 bg-black-color-900/70 text-white border rounded-xl outline-none placeholder-gray-400"
+      placeholder="Introduce tu usuario o correo"
+      formControlName="login">
+  </div>
+
+  <!-- Contraseña -->
+  <div class="mb-6">
+    <label [for]="formPrefix + 'password'" [class]="isAdminView ? 'text-citron-200' : 'text-primary-200'" class="block font-medium mb-2">
+      Contraseña
+    </label>
+    <input 
+      type="password"
+      [id]="formPrefix + 'password'"
+      [class]="isAdminView ? 
+        'border-citron-500/30 focus:border-citron-500 focus:ring-citron-500/50' : 
+        'border-primary-500/30 focus:border-primary-500 focus:ring-primary-500/50'"
+      class="w-full p-4 bg-black-color-900/70 text-white border rounded-xl outline-none placeholder-gray-400"
+      placeholder="Introduce tu contraseña"
+      formControlName="password">
+  </div>
+
+  <!-- Recordarme -->
+  <div class="mb-6 flex items-center">
+    <input 
+      type="checkbox" 
+      [id]="formPrefix + 'rememberMe'" 
+      formControlName="rememberMe" 
+      [class]="isAdminView ? 
+        'text-citron-500 focus:ring-citron-500 border-citron-500' : 
+        'text-primary-500 focus:ring-primary-500 border-primary-500'"
+      class="h-4 w-4 rounded focus:ring-2">
+    <label 
+      [for]="formPrefix + 'rememberMe'" 
+      [class]="isAdminView ? 'text-citron-200' : 'text-primary-200'"
+      class="ml-2">
+      Recordarme
+    </label>
+  </div>
+
+  <!-- Botón -->
+  <div class="mb-6">
+    <button 
+      type="submit" 
+      [class]="isAdminView ? 
+        'bg-gradient-to-r from-citron-500 to-amber-500 shadow-citron-500/20 hover:from-citron-600 hover:to-amber-600' : 
+        'bg-gradient-to-r from-celeste-color-600 to-primary-500 shadow-primary-500/20 hover:opacity-90'"
+      class="w-full p-4 text-black font-medium rounded-xl transition duration-300 ease-in-out shadow-lg"
+      [disabled]="parentForm.invalid">
+      Iniciar sesión
+    </button>
+  </div>
+</div>
