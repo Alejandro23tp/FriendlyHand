@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginRequest, LoginResponse, User } from '../interfaces/auth.interface';
+import { InactivityService } from './inactivity.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,11 @@ export class LoginService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private inactivityService: InactivityService,
+    private router: Router
+  ) {
     this.checkToken();
   }
 
@@ -33,9 +39,16 @@ export class LoginService {
     localStorage.clear();
     this.currentUserSubject.next(null);
 
-    // Solo intentar logout en el servidor si hay un token válido
-    if (token && this.isAuthenticated()) {
-      this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe({
+    // Navegar a login después de limpiar
+    this.router.navigate(['/login']);
+
+    // Intentar logout en el servidor si hay token
+    if (token) {
+      this.http.post(`${this.apiUrl}auth/logout`, {}, {
+        headers: new HttpHeaders({
+          'Authorization': `Bearer ${token}`
+        })
+      }).subscribe({
         error: () => {
           console.log('Error en logout pero sesión ya cerrada localmente');
         }

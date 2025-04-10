@@ -1,6 +1,8 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { LoginService } from '../../services/login.service';
+import { InactivityService } from '../../services/inactivity.service';
 
 interface UserData {
   usr_id: string;
@@ -21,7 +23,11 @@ export class HeaderComponent {
   isProfileMenuOpen: boolean = false;
   userData: UserData | null = null;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private loginService: LoginService,
+    private inactivityService: InactivityService
+  ) {
     this.loadUserData();
   }
 
@@ -45,8 +51,8 @@ export class HeaderComponent {
   }
 
   logout() {
-    localStorage.removeItem('userData');
-    localStorage.clear();
-    this.router.navigate(['/login']);
+    this.inactivityService.stopAndCleanup();
+    this.loginService.logout();
+    this.isProfileMenuOpen = false; // Cerrar el menú de perfil
   }
 }

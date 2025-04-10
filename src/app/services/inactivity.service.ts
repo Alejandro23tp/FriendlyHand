@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class InactivityService {
-  private readonly WARNING_TIME = 50000; // 50 segundos antes de mostrar advertencia
+  private readonly WARNING_TIME = 50000; //50000 50 segundos antes de mostrar advertencia
   private warningTimer: any;
   private autoLogoutTimer: any;
   private showWarningDialog = new BehaviorSubject<boolean>(false);
@@ -17,8 +17,13 @@ export class InactivityService {
   showWarningDialog$ = this.showWarningDialog.asObservable();
 
   setupInactivityTimer() {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      this.stopAndCleanup();
+      return;
+    }
+
     this.isSessionActive = true;
-    this.removeEventListeners();
     this.startTimer();
     this.setupEventListeners();
   }
@@ -33,7 +38,7 @@ export class InactivityService {
       this.autoLogoutTimer = setTimeout(() => {
         console.log('Session ended');
         this.endSession();
-      }, 10000); // 10 segundos para cerrar sesión después de la advertencia
+      }, 10000); //10000 10 segundos para cerrar sesión después de la advertencia
     }, this.WARNING_TIME);
   }
 
@@ -79,5 +84,12 @@ export class InactivityService {
     this.stopTimers();
     localStorage.clear();
     this.router.navigate(['/login']);
+  }
+
+  stopAndCleanup() {
+    this.isSessionActive = false;
+    this.removeEventListeners();
+    this.clearTimers(); // Cambiado de clearAllTimers a clearTimers
+    this.showWarningDialog.next(false);
   }
 }

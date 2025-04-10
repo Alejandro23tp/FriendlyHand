@@ -167,19 +167,33 @@
     <form (submit)="registrarParticipante($event)" class="space-y-4">
       <div class="space-y-4">
         <div class="relative">
-          <label class="block text-gray-400 mb-2 text-sm">Nombre Completo</label>
-          <input [(ngModel)]="nuevoParticipante.nombre" 
-                 name="nombre"
-                 class="w-full p-3 rounded-lg bg-black-color-700 text-white border border-gray-700 focus:border-celeste-color-500 focus:ring-1 focus:ring-celeste-color-500 transition-all"
-                 placeholder="Ingrese el nombre completo" />
+          <label class="block text-gray-400 mb-2 text-sm">Número de Cédula</label>
+          <div class="flex gap-2">
+            <input [(ngModel)]="nuevoParticipante.cedula" 
+                   (blur)="verificarCedula()"
+                   name="cedula"
+                   class="w-full p-3 rounded-lg bg-black-color-700 text-white border border-gray-700 focus:border-celeste-color-500 focus:ring-1 focus:ring-celeste-color-500 transition-all"
+                   placeholder="Ingrese el número de cédula" />
+            <button type="button" 
+                    [disabled]="verificando"
+                    (click)="verificarCedula()"
+                    class="px-3 bg-celeste-color-600/20 text-celeste-color-500 rounded-lg hover:bg-celeste-color-600/30 disabled:opacity-50">
+              <div *ngIf="verificando" class="animate-spin h-5 w-5 border-2 border-celeste-color-500 border-t-transparent rounded-full"></div>
+              <svg *ngIf="!verificando" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div class="relative">
-          <label class="block text-gray-400 mb-2 text-sm">Número de Cédula</label>
-          <input [(ngModel)]="nuevoParticipante.cedula" 
-                 name="cedula"
+          <label class="block text-gray-400 mb-2 text-sm">Nombre Completo</label>
+          <input [(ngModel)]="nuevoParticipante.nombre" 
+                 [readonly]="nombreVerificado"
+                 name="nombre"
                  class="w-full p-3 rounded-lg bg-black-color-700 text-white border border-gray-700 focus:border-celeste-color-500 focus:ring-1 focus:ring-celeste-color-500 transition-all"
-                 placeholder="Ingrese el número de cédula" />
+                 [class.bg-black-color-800]="nombreVerificado"
+                 placeholder="Ingrese el nombre completo" />
         </div>
 
         <div class="relative">
@@ -202,13 +216,16 @@
 
       <div class="flex justify-end space-x-3 mt-6">
         <button type="button" 
+                [disabled]="isLoading"
                 (click)="cerrarModalRegistro()"
-                class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50">
           Cancelar
         </button>
         <button type="submit"
-                class="px-4 py-2 bg-gradient-to-r from-celeste-color-600 to-celeste-color-700 text-white rounded-lg hover:from-celeste-color-700 hover:to-celeste-color-800 transition-all duration-300">
-          Registrar
+                [disabled]="isLoading"
+                class="px-4 py-2 bg-gradient-to-r from-celeste-color-600 to-celeste-color-700 text-white rounded-lg hover:from-celeste-color-700 hover:to-celeste-color-800 transition-all duration-300 disabled:opacity-50 flex items-center gap-2">
+          <div *ngIf="isLoading" class="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+          <span>{{ isLoading ? 'Guardando...' : 'Registrar' }}</span>
         </button>
       </div>
     </form>

@@ -3,7 +3,14 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { LoadingService } from './loading.service';
-import { toast } from 'ngx-sonner';
+
+interface CedulaVerificationResponse {
+  success: boolean;
+  nombre: string;
+  existe_en_sistema: boolean;
+  tiene_cuenta: boolean;
+  participante: any;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -23,29 +30,27 @@ export class ParticipantesService {
 
   registrarParticipante(participante: any) {    
     const url = `${this.environment}participantes/mutate`;
-    this.loadingService.show();
     return this.http.post(url, {
       mutate: [
         {
           operation: 'create',
           attributes: {
             part_nombre: participante.nombre,
+            part_cedula: participante.cedula,
             part_telefono: participante.telefono,
             part_cupos: participante.cupo
           },
         },
       ],
-    }).pipe(
-      finalize(() => {
-        this.loadingService.hide();
-        toast.success('¡Éxito!', {
-          description: 'Participante registrado correctamente'
-        });
-      })
-    );
+    });
   }
 
-  
+  verificarCedula(cedula: string) {
+    return this.http.post<CedulaVerificationResponse>(`${this.environment}verificar-cedula`, {
+      cedula: cedula
+    });
+  }
+
   actualizarParticipante(participante: any) {    
     const url = `${this.environment}participantes/mutate`; 
     return this.http.post(url, {
@@ -55,6 +60,7 @@ export class ParticipantesService {
           key : participante.id,
           attributes: {
             part_nombre: participante.nombre,
+            part_cedula: participante.cedula,
             part_telefono: participante.telefono,
             part_cupos: participante.cupo
           },
