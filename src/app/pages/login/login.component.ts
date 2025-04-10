@@ -26,7 +26,7 @@ export default class LoginComponent implements OnInit {
     private inactivityService: InactivityService
   ) {
     this.loginForm = this.fb.group({
-      usr_usuario: ['', [Validators.required]], // Cambiado de usr_correo a usr_usuario
+      login: ['', [Validators.required]], // Cambiado de usr_usuario a login
       password: ['', [Validators.required, Validators.minLength(6)]],
       rememberMe: [false]
     });
@@ -43,7 +43,7 @@ export default class LoginComponent implements OnInit {
         next: (response) => {
           // Manejar recordar usuario
           if (loginData.rememberMe) {
-            localStorage.setItem('remembered_user', loginData.usr_usuario);
+            localStorage.setItem('remembered_user', loginData.login); // Cambiado de usr_usuario a login
           } else {
             localStorage.removeItem('remembered_user');
           }
@@ -68,7 +68,7 @@ export default class LoginComponent implements OnInit {
     const rememberedUser = localStorage.getItem('remembered_user');
     if (rememberedUser) {
       this.loginForm.patchValue({
-        usr_usuario: rememberedUser,
+        login: rememberedUser, // Cambiado de usr_usuario a login
         rememberMe: true
       });
     }

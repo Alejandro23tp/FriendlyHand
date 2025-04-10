@@ -52,9 +52,9 @@
             
             <!-- Formulario de inicio de sesión -->
             <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-                <!-- Usuario -->
+                <!-- Usuario o Correo -->
                 <div class="mb-6">
-                    <label for="usr_usuario" class="block text-primary-200 font-medium mb-2">Usuario</label>
+                    <label for="login" class="block text-primary-200 font-medium mb-2">Usuario o Correo</label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-primary-500 transition-colors group-hover:text-primary-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -64,10 +64,10 @@
                         </div>
                         <input 
                             type="text" 
-                            id="usr_usuario" 
+                            id="login" 
                             class="w-full p-4 pl-12 bg-black-color-900/70 text-white border border-primary-500/30 rounded-xl focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 transition-all outline-none"
-                            placeholder="Introduce tu usuario" 
-                            formControlName="usr_usuario">
+                            placeholder="Introduce tu usuario o correo" 
+                            formControlName="login">
                     </div>
                 </div>
                 

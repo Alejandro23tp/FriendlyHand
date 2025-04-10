@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class InactivityService {
-  private readonly WARNING_TIME = 50000; //50000 50 segundos antes de mostrar advertencia
+  private readonly WARNING_TIME = 5000; //50000 50 segundos antes de mostrar advertencia
   private warningTimer: any;
   private autoLogoutTimer: any;
   private showWarningDialog = new BehaviorSubject<boolean>(false);
@@ -38,7 +38,7 @@ export class InactivityService {
       this.autoLogoutTimer = setTimeout(() => {
         console.log('Session ended');
         this.endSession();
-      }, 10000); //10000 10 segundos para cerrar sesión después de la advertencia
+      }, 5000); //10000 10 segundos para cerrar sesión después de la advertencia
     }, this.WARNING_TIME);
   }
 
@@ -79,10 +79,20 @@ export class InactivityService {
   }
 
   endSession() {
+    // Preservar usuario recordado si existe
+    const shouldRemember = localStorage.getItem('remembered_user') !== null;
+    const rememberedUser = localStorage.getItem('remembered_user');
+    
     this.isSessionActive = false;
     this.removeEventListeners();
     this.stopTimers();
     localStorage.clear();
+
+    // Restaurar usuario recordado si existía
+    if (shouldRemember && rememberedUser) {
+      localStorage.setItem('remembered_user', rememberedUser);
+    }
+
     this.router.navigate(['/login']);
   }
 

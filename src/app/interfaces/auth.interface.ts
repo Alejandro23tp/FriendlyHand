@@ -14,6 +14,6 @@ export interface User {
 }
 
 export interface LoginRequest {
-  email: string;
+  login: string;  // Ahora puede ser usr_usuario o usr_correo
   password: string;
 }
