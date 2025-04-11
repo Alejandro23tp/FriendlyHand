@@ -145,21 +145,16 @@ export class ParticipantLoginService {
   isAuthenticated(): boolean {
     const token = this.getToken();
     if (!token) return false;
-    
+  
     try {
-      // Verificar si el token está expirado
       const tokenData = JSON.parse(atob(token.split('.')[1]));
       const expirationDate = new Date(tokenData.exp * 1000);
-      if (expirationDate < new Date()) {
-        this.logout();
-        return false;
-      }
-      return true;
+      return expirationDate > new Date(); // Solo devuelve true si el token está vigente
     } catch {
-      this.logout();
       return false;
     }
   }
+  
 
   getAuthHeaders(): HttpHeaders {
     const token = this.getToken();

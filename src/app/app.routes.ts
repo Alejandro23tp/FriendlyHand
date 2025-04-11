@@ -12,6 +12,7 @@ import { SemanalComponent } from './pages/semanal/semanal.component';
 import { PagosComponent } from './pages/pagos/pagos.component';
 import { PrestamosrecordatorioComponent } from './pages/prestamosrecordatorio/prestamosrecordatorio.component';
 import { PdfComponent } from './pages/pdf/pdf.component';
+import { participantAuthGuard } from './guards/participant-auth.guard';
 
 export const routes: Routes = [
     {
@@ -67,9 +68,29 @@ export const routes: Routes = [
         ]
     },
     {
-        path: '**',
-        redirectTo: 'login'
+      path: 'participante',
+      canActivate: [participantAuthGuard],
+      component: LayoutComponent, // Crea un layout diferente si es necesario
+      children: [
+        {
+            path: 'cliente/home',
+            component: HomeComponent
+        },
+        {
+          path: 'semana',
+          component: SemanasparticipanteComponent
+        },
+        {
+          path: 'prestamo',
+          component: PrestamosparticipanteComponent
+        },
+        // ... otras rutas de participantes
+      ]
+    },
+    {
+      path: '**',
+      redirectTo: 'login'
     }
-];
+  ];
 
 export default routes;
