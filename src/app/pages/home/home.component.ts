@@ -68,9 +68,39 @@ export default class HomeComponent implements OnInit {
   }
 
   private loadUserData() {
-    const userDataString = localStorage.getItem('userData');
-    if (userDataString) {
-      this.userData = JSON.parse(userDataString);
+    // 1. Primero intentamos cargar como participante
+    const participantDataString = localStorage.getItem('participant_data');
+    
+    if (participantDataString) {
+      try {
+        const participantData = JSON.parse(participantDataString);
+        console.log('Datos del participante:', participantData);
+        // Transformamos los datos del participante al formato del admin
+        this.userData = {
+          id: participantData.id,
+          usr_usuario: participantData.username || 'Participante',
+          usr_correo: participantData.email || '',
+          created_at: new Date().toISOString(), // O usar fecha real si está disponible
+          updated_at: new Date().toISOString(),
+          // Campos adicionales específicos del participante si los necesitas
+          participante_cedula: participantData.participante.cedula,
+          participante_cupos: participantData.participante.cupos
+        };
+        return;
+      } catch (e) {
+        console.error('Error al parsear datos de participante:', e);
+      }
+    }
+  
+    // 2. Si no es participante, cargamos como admin (sin cambios)
+    const adminDataString = localStorage.getItem('userData');
+    console.log('Datos del admin:', adminDataString);
+    if (adminDataString) {
+      try {
+        this.userData = JSON.parse(adminDataString);
+      } catch (e) {
+        console.error('Error al parsear datos de admin:', e);
+      }
     }
   }
 

@@ -33,7 +33,7 @@
       <!-- Inicio -->
       <li [ngClass]="{'mt-14': isMobile}">
         <a 
-          routerLink="/home" 
+          routerLink="/admin/home" 
           (click)="handleLinkClick()"
           routerLinkActive="bg-cyan-100/30 text-cyan-400 border-l-4 border-cyan-400" 
           [routerLinkActiveOptions]="{exact: true}"
@@ -70,7 +70,7 @@
           class="pl-6 space-y-2 transition-all duration-200">
           <li>
             <a 
-              routerLink="/participantes" 
+              routerLink="/admin/participantes" 
               (click)="handleLinkClick()"
               routerLinkActive="bg-cyan-100/30"
               class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
@@ -79,7 +79,7 @@
           </li>
           <li>
             <a 
-              routerLink="/participante/semana" 
+              routerLink="admin/semana" 
               (click)="handleLinkClick()"
               routerLinkActive="bg-cyan-100/30"
               class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
@@ -88,7 +88,7 @@
           </li>
           <li>
             <a 
-              routerLink="/participante/prestamo" 
+              routerLink="/admin/prestamo" 
               (click)="handleLinkClick()"
               routerLinkActive="bg-cyan-100/30"
               class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
@@ -101,7 +101,7 @@
       <!-- Tabla Semanal -->
       <li>
         <a 
-          routerLink="/semanal" 
+          routerLink="/admin/semanal" 
           (click)="handleLinkClick()"
           routerLinkActive="bg-cyan-100/30"
           class="flex items-center p-3 text-base font-medium text-white rounded-lg hover:bg-cyan-200/30 transition-all group">
@@ -135,7 +135,7 @@
           class="pl-6 space-y-2 transition-all duration-200">
           <li>
             <a 
-              routerLink="/recordatorios/pagos" 
+              routerLink="/admin/recordatorios/pagos" 
               (click)="handleLinkClick()"
               routerLinkActive="bg-cyan-100/30"
               class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
@@ -144,7 +144,7 @@
           </li>
           <li>
             <a 
-              routerLink="/recordatorios/prestamos" 
+              routerLink="/admin/recordatorios/prestamos" 
               (click)="handleLinkClick()"
               routerLinkActive="bg-cyan-100/30"
               class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">
@@ -153,7 +153,7 @@
           </li>
           <li>
             <a 
-              routerLink="/recordatorios/pdf" 
+              routerLink="/admin/recordatorios/pdf" 
               (click)="handleLinkClick()"
               routerLinkActive="bg-cyan-100/30"
               class="block px-4 py-2 text-gray-300 hover:bg-cyan-600 hover:text-white rounded-lg transition-colors">

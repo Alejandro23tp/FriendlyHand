@@ -10,6 +10,7 @@ import { InactivityService } from '../../services/inactivity.service';
 import { LoginFieldsComponent } from '../../components/login-fields/login-fields.component';
 import { LoginResponse } from '../../interfaces/auth.interface';
 import { Observable } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
@@ -45,22 +46,31 @@ export default class LoginComponent implements OnInit {
       this.isLoading = true;
       const loginData = this.loginForm.value;
   
-      const loginRequest: Observable<LoginResponse | ParticipanteLoginResponse> =
+      const loginRequest: Observable<LoginResponse | ParticipanteLoginResponse> = 
         this.isAdminView
           ? this.loginService.login(loginData)
           : this.participantLoginService.login(loginData);
   
       loginRequest.pipe(
-        finalize(() => this.isLoading = false)
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        })
       ).subscribe({
-        next: (response) => {
-          this.handleLoginResponse(response); // puede hacer instanceof para distinguir el tipo
+        next: (response: LoginResponse | ParticipanteLoginResponse) => {
+          this.handleLoginResponse(response);
           toast.success('Ingreso Exitoso');
           this.inactivityService.setupInactivityTimer();
-          this.router.navigate([this.isAdminView ? '/home' : '/home']);
+          
+          const redirectPath = this.isAdminView 
+            ? '/admin/home' 
+            : '/participante/home';
+          this.router.navigate([redirectPath]);
         },
-        error: (error: { error?: { message?: string } }) => {
-          toast.error(error.error?.message || 'Credenciales incorrectas');
+        error: (error: HttpErrorResponse) => {
+          const errorMessage = error.error?.message 
+            || 'Error de autenticación. Verifique sus credenciales';
+          toast.error(errorMessage);
         }
       });
     } else {

@@ -12,79 +12,34 @@ import { SemanalComponent } from './pages/semanal/semanal.component';
 import { PagosComponent } from './pages/pagos/pagos.component';
 import { PrestamosrecordatorioComponent } from './pages/prestamosrecordatorio/prestamosrecordatorio.component';
 import { PdfComponent } from './pages/pdf/pdf.component';
-import { participantAuthGuard } from './guards/participant-auth.guard';
+
 
 export const routes: Routes = [
     {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'login'
+      path: '',
+      pathMatch: 'full',
+      redirectTo: 'login'
     },
     {
-        path: 'login',
-        component: LoginComponent
+      path: 'login',
+      component: LoginComponent
     },
     {
-        path: '',
-        canActivate: [authGuard],
-        canActivateChild: [authGuard],
-        component: LayoutComponent,
-        children: [
-            {
-                path: 'home',
-                component: HomeComponent
-            },
-            {
-                path: 'participantes',
-                component: ParticipantesComponent
-            },
-            {
-               path: 'participante/semana',
-               component: SemanasparticipanteComponent
-                
-            },
-            {
-                path: 'participante/prestamo',
-                component: PrestamosparticipanteComponent
-            },
-            {
-                path: 'semanal',
-                component: SemanalComponent
-            },
-            {
-                path : 'recordatorios/pagos',
-                component: PagosComponent
-            },
-            {
-                path : 'recordatorios/prestamos',
-                component: PrestamosrecordatorioComponent
-            },
-            {
-                path : 'recordatorios/pdf',
-                component: PdfComponent
-            }
-
-            // Aquí puedes agregar más rutas hijas que compartirán el layout
-        ]
-    },
-    {
-      path: 'participante',
-      canActivate: [participantAuthGuard],
-      component: LayoutComponent, // Crea un layout diferente si es necesario
+      path: '',
+      canActivate: [authGuard],
+      component: LayoutComponent,
       children: [
+        // Rutas de admin y otras secciones importantes
         {
-            path: 'cliente/home',
-            component: HomeComponent
+          path: 'admin',
+          loadChildren: () =>
+            import('./pages/pages.routes').then((m) => m.AdminRoutes) // Lazy loading del módulo de admin
         },
         {
-          path: 'semana',
-          component: SemanasparticipanteComponent
-        },
-        {
-          path: 'prestamo',
-          component: PrestamosparticipanteComponent
-        },
-        // ... otras rutas de participantes
+          path: 'participante',
+          loadChildren: () =>
+            import('./pages/pages.routes').then((m) => m.ParticipantRoutes) // Lazy loading del módulo de participante
+        }
       ]
     },
     {

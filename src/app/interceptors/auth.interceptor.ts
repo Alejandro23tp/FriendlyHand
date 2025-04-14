@@ -7,7 +7,17 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const token = localStorage.getItem('jwt_token');
+
+  // Validar si la solicitud pertenece al participante (más estricta)
+  const isParticipantRequest =
+    req.url.startsWith('/participante') || // Rutas del prefijo participante
+    req.url.startsWith('/auth/participante'); // Rutas de autenticación para participante
+
+  // Seleccionar el token correcto dependiendo del contexto
+  const token = isParticipantRequest
+    ? localStorage.getItem('participant_jwt_token') // Token del participante
+    : localStorage.getItem('jwt_token'); // Token del administrador
+
   const isLoginRequest = req.url.includes('auth/login');
 
   if (token && !isLoginRequest) {
@@ -28,3 +38,4 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     })
   );
 };
+

@@ -4,37 +4,65 @@ import { PrestamosparticipanteComponent } from "./prestamosparticipante/prestamo
 import LayoutComponent from "../layout/layout.component";
 import HomeComponent from "./home/home.component";
 import ParticipantesComponent from "./participantes/participantes.component";
+import { PagosComponent } from "./pagos/pagos.component";
+import { PrestamosrecordatorioComponent } from "./prestamosrecordatorio/prestamosrecordatorio.component";
+import { PdfComponent } from "./pdf/pdf.component";
+import { SemanalComponent } from "./semanal/semanal.component";
 
-export const routes: Routes = [
+// Rutas para administrador
+export const AdminRoutes: Routes = [
     {
-        path: '',
-        component: LayoutComponent,
-            children:[
-                {
-                    path: 'home',
-                    component: HomeComponent
-                },
-                {
-                    path: 'participantes',
-                    component: ParticipantesComponent
-                },
-                {
-                path: 'participante/semana',
-                component: SemanasparticipanteComponent
-                
-                },
-                {
-                    path: 'participante/prestamo',
-                    component: PrestamosparticipanteComponent
-                },
-                {
-                    path: 'semanas',
-                    component: SemanasparticipanteComponent
-                }
-                
-                
-            ]
+      path: 'home',
+      component: HomeComponent
+    },
+    {
+      path: 'participantes',
+      component: ParticipantesComponent
+    },
+    {
+      path: 'semana',
+      component: SemanasparticipanteComponent
+    },
+    {
+      path: 'prestamo',
+      component: PrestamosparticipanteComponent
+    },
+    {
+        path: 'semanal',
+        component: SemanalComponent
+    },
+    {
+      path: 'recordatorios/pagos',
+      component: PagosComponent
+    },
+    {
+      path: 'recordatorios/prestamos',
+      component: PrestamosrecordatorioComponent
+    },
+    {
+      path: 'recordatorios/pdf',
+      component: PdfComponent
     }
-];
-
-export default routes;
+  ];
+  
+  // Rutas para participante
+  export const ParticipantRoutes: Routes = [
+    {
+      path: 'home',
+      component: HomeComponent
+    },
+    {
+      path: 'semana',
+      component: SemanasparticipanteComponent
+    },
+    {
+      path: 'pagos',
+      component: PagosComponent
+    },
+    {
+      path: 'prestamo',
+      component: PrestamosparticipanteComponent
+    }
+  ];
+  
+  export default { AdminRoutes, ParticipantRoutes };
