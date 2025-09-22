@@ -1,0 +1,186 @@
+<div class="min-h-screen pt-12 font-sans relative overflow-hidden text-white p-6 bg-black-color-800">
+
+
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="flex justify-center items-center h-64">
+      <div class="relative">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-celeste-color-500"></div>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="h-8 w-8 bg-celeste-color-500/20 rounded-full animate-pulse"></div>
+        </div>
+        <div class="absolute inset-0 animate-ping rounded-full h-16 w-16 border-2 border-celeste-color-700 opacity-50"></div>
+      </div>
+    </div>
+  }
+
+  <!-- Error Message -->
+  @if (error) {
+    <div class="bg-red-500/20 p-6 rounded-lg text-center max-w-md mx-auto border border-red-500/50 shadow-lg animate-fade-in">
+      <div class="flex items-center justify-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <p class="text-red-400 text-lg">{{ error }}</p>
+    </div>
+  }
+
+  <!-- Contenido Principal -->
+  @if (!loading && !error && estadoCuenta) {
+    <div class="max-w-5xl mx-auto relative z-10">
+      <!-- Resumen General (Panel Holográfico) -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-extrabold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r text-white ">
+          Estado de Cuenta
+        </h2>
+        <div class="relative bg-celeste-color-900/20 backdrop-blur-lg rounded-2xl p-8 border border-celeste-color-500/30 shadow-2xl holographic-panel animate-slide-up overflow-hidden">
+          <!-- Efectos holográficos -->
+          <div class="absolute inset-0 bg-grid-small-pattern opacity-5"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-celeste-color-500/10 to-transparent opacity-20 animate-holo-scan"></div>
+          <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-celeste-color-400 to-celeste-color-600"></div>
+          <div class="absolute top-2 left-0 w-full h-px bg-gradient-to-r from-celeste-color-400/80 to-transparent"></div>
+          
+          <!-- Scanline effect -->
+          <div class="absolute inset-0 scanline"></div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center relative z-10">
+            <div class="space-y-2 transform hover:scale-105 transition-transform duration-300">
+              <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-celeste-color-900/60 flex items-center justify-center border border-celeste-color-500/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-celeste-color-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </div>
+              <p class="text-celeste-color-400 font-medium text-lg">Total Prestado</p>
+              <p class="text-3xl font-bold text-white animate-number-flip digital-text">${{ estadoCuenta.total_prestado }}</p>
+            </div>
+            <div class="space-y-2 transform hover:scale-105 transition-transform duration-300">
+              <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-celeste-color-900/60 flex items-center justify-center border border-celeste-color-500/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <p class="text-celeste-color-400 font-medium text-lg">Total Pagado</p>
+              <p class="text-3xl font-bold text-green-300 animate-number-flip digital-text">${{ estadoCuenta.total_pagado }}</p>
+            </div>
+            <div class="space-y-2 transform hover:scale-105 transition-transform duration-300">
+              <div class="w-16 h-16 mx-auto mb-3 rounded-full bg-celeste-color-900/60 flex items-center justify-center border border-celeste-color-500/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+              </div>
+              <p class="text-celeste-color-400 font-medium text-lg">Saldo Pendiente</p>
+              <p class="text-3xl font-bold text-red-400 animate-number-flip digital-text">${{ estadoCuenta.saldo_pendiente }}</p>
+            </div>
+          </div>
+          
+          <div class="mt-12 text-center">
+            <div class="h-px w-full bg-gradient-to-r from-transparent via-celeste-color-500/30 to-transparent mb-6"></div>
+            <div class="inline-flex items-center space-x-2 bg-celeste-color-900/40 px-6 py-3 rounded-full border border-celeste-color-500/30">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-celeste-color-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+              </svg>
+              <p class="text-celeste-color-400 font-medium">Cupo / Acciones: <span class="ml-1 text-xl font-semibold text-white digital-text">{{ estadoCuenta.cupos_totales }}</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Préstamos Activos (Tarjetas Orbitales) -->
+      <section>
+        <h3 class="text-3xl font-bold mb-10 text-center text-transparent bg-clip-text bg-gradient-to-r text-white">
+          Préstamos Activos
+        </h3>
+        @if (prestamosActivos.length === 0) {
+          <div class="text-center p-8 bg-celeste-color-900/20 backdrop-blur-md rounded-xl border border-celeste-color-700/50 animate-fade-in">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-celeste-color-900/60 flex items-center justify-center border border-celeste-color-500/40">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-celeste-color-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p class="text-celeste-color-400 text-lg italic">No tienes préstamos activos.</p>
+          </div>
+        } @else {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            @for (prestamo of prestamosActivos; track prestamo.id; let i = $index) {
+              <div class="relative bg-celeste-color-900/20 backdrop-blur-lg rounded-xl p-6 border border-celeste-color-600/40 shadow-lg hover:shadow-celeste-color-500/20 transition-all duration-500 group animate-orbital overflow-hidden" 
+                   [ngClass]="{'delay-1': i % 2 === 0, 'delay-2': i % 2 !== 0}">
+                <!-- Efectos de diseño -->
+                <div class="absolute -top-10 -right-10 w-20 h-20 bg-celeste-color-500/10 rounded-full blur-xl group-hover:bg-celeste-color-500/20 transition-all duration-500"></div>
+                <div class="absolute top-0 left-0 w-full h-full bg-grid-small-pattern opacity-5"></div>
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-celeste-color-500/50 to-transparent animate-holo-line"></div>
+                <div class="absolute bottom-0 right-0 w-full h-1 bg-gradient-to-l from-celeste-color-500/50 to-transparent animate-holo-line reverse"></div>
+                
+                <!-- Efecto de brillo al hover -->
+                <div class="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-celeste-color-500/60 group-hover:shadow-[0_0_20px_rgba(0,255,255,0.4)] transition-all duration-500"></div>
+                
+                <div class="relative z-10">
+                  <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center">
+                      <div class="w-10 h-10 rounded-full bg-celeste-color-900/80 flex items-center justify-center border border-celeste-color-500/40 mr-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-celeste-color-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <h4 class="text-xl font-semibold text-celeste-color-100 animate-text-reveal">
+                        {{ prestamo.pp_semana }}
+                      </h4>
+                    </div>
+                    <span class="text-xs font-medium px-3 py-1.5 rounded-full
+                      {{ prestamo.estado === 'Pendiente' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40' : 'bg-green-500/20 text-green-300 border border-green-500/40' }}">
+                      <div class="flex items-center">
+                        <div class="w-2 h-2 rounded-full {{ prestamo.estado === 'Pendiente' ? 'bg-yellow-400 animate-pulse' : 'bg-green-400' }} mr-1.5"></div>
+                        {{ prestamo.estado }}
+                      </div>
+                    </span>
+                  </div>
+                  
+                  <div class="space-y-4 text-sm">
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-celeste-color-900/40 group-hover:bg-celeste-color-900/60 transition-colors duration-300">
+                      <span class="text-celeste-color-400 font-medium flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Monto:
+                      </span>
+                      <span class="text-white font-semibold digital-text">${{ prestamo.pp_prestamo }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-celeste-color-900/40 group-hover:bg-celeste-color-900/60 transition-colors duration-300">
+                      <span class="text-celeste-color-400 font-medium flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        Interés:
+                      </span>
+                      <span class="text-white font-semibold digital-text">${{ prestamo.interes }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-celeste-color-900/40 group-hover:bg-celeste-color-900/60 transition-colors duration-300">
+                      <span class="text-celeste-color-400 font-medium flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Fecha de Pago:
+                      </span>
+                      <span class="text-gray-300 font-semibold digital-text">{{ prestamo.fecha_pago | date:'dd/MM/yy' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-2 rounded-lg bg-celeste-color-900/40 group-hover:bg-celeste-color-900/60 transition-colors duration-300">
+                      <span class="text-celeste-color-400 font-medium flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Creado:
+                      </span>
+                      <span class="text-gray-300 font-semibold digital-text">{{ prestamo.created_at | date:'dd/MM/yy' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </div>
+  }
+ 
+  

@@ -1,0 +1,109 @@
+<div class="min-h-screen pt-20 font-sans relative overflow-hidden text-white p-6">
+
+  
+    @if (loading) {
+      <div class="flex justify-center items-center h-64">
+        <div class="relative">
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-celeste-color-500"></div>
+          <div class="absolute inset-0 animate-ping rounded-full h-12 w-12 border-2 border-celeste-color-700 opacity-50"></div>
+        </div>
+      </div>
+    } @else if (error) {
+      <div class="bg-red-500/20 p-4 rounded-lg text-center max-w-md mx-auto border border-red-500/50 shadow-lg">
+        <p class="text-red-400">{{ error }}</p>
+      </div>
+    } @else {
+      <div class="max-w-5xl mx-auto relative z-10">
+        <!-- Sección Préstamos -->
+        <div class="mb-16">
+          <h2 class="text-4xl font-extrabold mb-10 text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-white tracking-wide">
+            Tus Préstamos
+          </h2>
+          @if (prestamos.length === 0) {
+            <div class="text-center p-8 bg-celeste-color-900/30 rounded-xl border border-celeste-color-700/50">
+              <p class="text-celeste-color-400 text-lg italic">No tienes préstamos registrados.</p>
+            </div>
+          } @else {
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              @for (prestamo of prestamos; track prestamo.id) {
+                <div class="relative bg-celeste-color-900/30 backdrop-blur-md rounded-xl p-6 border border-celeste-color-700/50 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                  <!-- Borde iluminado al pasar el mouse -->
+                  <div class="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-celeste-color-500/50 group-hover:shadow-[0_0_15px_rgba(0,255,255,0.3)] transition-all duration-300"></div>
+                  <div class="relative z-10">
+                    <div class="flex justify-between items-center mb-4">
+                      <h3 class="text-lg font-semibold text-celeste-color-100">
+                        Préstamo {{ prestamo.pp_semana }}
+                      </h3>
+                      <span class="text-xs font-medium px-2 py-1 rounded-full bg-celeste-color-800/50 text-celeste-color-200
+                        {{ prestamo.estado === 'Cancelado' ? 'bg-green-500/30 text-green-300' : 'bg-yellow-500/30 text-yellow-300' }}">
+                        {{ prestamo.estado }}
+                      </span>
+                    </div>
+                    <div class="space-y-3 text-sm">
+                      <div class="flex justify-between">
+                        <span class="text-celeste-color-400 font-medium">Monto:</span>
+                        <span class="text-white">${{ prestamo.pp_prestamo }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-celeste-color-400 font-medium">Interés:</span>
+                        <span class="text-white">${{ prestamo.interes }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-celeste-color-400 font-medium">Fecha del Prestamo:</span>
+                        <span class="text-gray-300">{{ prestamo.fecha_pago | date:'dd/MM/yy' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+  
+        <!-- Sección Pagos -->
+        <div>
+          <h2 class="text-4xl font-extrabold mb-10 text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-white tracking-wide">
+            Historial de Pagos
+          </h2>
+          @if (pagos.length === 0) {
+            <div class="text-center p-8 bg-celeste-color-900/30 rounded-xl border border-celeste-color-700/50">
+              <p class="text-celeste-color-400 text-lg italic">No tienes pagos registrados.</p>
+            </div>
+          } @else {
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              @for (pago of pagos; track pago.id) {
+                <div class="relative bg-celeste-color-900/30 backdrop-blur-md rounded-xl p-6 border border-celeste-color-700/50 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                  <!-- Borde iluminado al pasar el mouse -->
+                  <div class="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-celeste-color-500/50 group-hover:shadow-[0_0_15px_rgba(0,255,255,0.3)] transition-all duration-300"></div>
+                  <div class="relative z-10">
+                    <div class="flex justify-between items-center mb-4">
+                      <h3 class="text-lg font-semibold text-celeste-color-100">
+                        Pago Semana {{ pago.semana }}
+                      </h3>
+                      <span class="text-sm font-semibold text-green-300 bg-green-500/20 px-2 py-1 rounded-full">
+                        ${{ pago.valor }}
+                      </span>
+                    </div>
+                    <div class="space-y-3 text-sm">
+                      <div class="flex justify-between">
+                        <span class="text-celeste-color-400 font-medium">Fecha:</span>
+                        <span class="text-gray-300">{{ pago.fecha | date:'dd/MM/yy' }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-celeste-color-400 font-medium">Observaciones:</span>
+                        <span class="text-gray-300">{{ pago.observaciones }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-celeste-color-400 font-medium">Creado:</span>
+                        <span class="text-gray-300">{{ pago.created_at | date:'dd/MM/yy' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>

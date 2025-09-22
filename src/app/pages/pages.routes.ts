@@ -8,6 +8,10 @@ import { PagosComponent } from "./pagos/pagos.component";
 import { PrestamosrecordatorioComponent } from "./prestamosrecordatorio/prestamosrecordatorio.component";
 import { PdfComponent } from "./pdf/pdf.component";
 import { SemanalComponent } from "./semanal/semanal.component";
+import { ParticipantHomeComponent } from "./cliente/participant-home/participant-home.component";
+import { ParticipantSemanasComponent } from "./cliente/participant-semanas/participant-semanas.component";
+import { ParticipantPrestamosComponent } from "./cliente/participant-prestamos/participant-prestamos.component";
+import { ParticipantEstadoCuentaComponent } from "./cliente/participant-estado-cuenta/participant-estado-cuenta.component";
 
 // Rutas para administrador
 export const AdminRoutes: Routes = [
@@ -49,19 +53,19 @@ export const AdminRoutes: Routes = [
   export const ParticipantRoutes: Routes = [
     {
       path: 'home',
-      component: HomeComponent
+      component: ParticipantHomeComponent
     },
     {
       path: 'semana',
-      component: SemanasparticipanteComponent
-    },
-    {
-      path: 'pagos',
-      component: PagosComponent
+      component: ParticipantSemanasComponent
     },
     {
       path: 'prestamo',
-      component: PrestamosparticipanteComponent
+      component: ParticipantPrestamosComponent
+    },
+    {
+      path: 'estadoCuenta',
+      component: ParticipantEstadoCuentaComponent
     }
   ];
   

@@ -1,0 +1,43 @@
+// dashboard.component.scss
+:host {
+    display: block;
+  }
+  
+  :root {
+    --primary-100: #e0e7ff;
+    --primary-200: #c7d2fe;
+    --primary-300: #a5b4fc;
+    --primary-500: #6366f1;
+    --black-800: #1e1e2d;
+    --black-900: #141421;
+  }
+  
+  .dashboard-card {
+    background: rgba(19, 21, 25, 0.7);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+  }
+  
+  .progress-bar {
+    height: 6px;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: .7;
+    }
+  }

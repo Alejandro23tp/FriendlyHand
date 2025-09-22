@@ -1,0 +1,158 @@
+<main class="min-h-screen pt-20 font-sans relative overflow-hidden bg-black-color-800">
+
+<!-- Header Section -->
+<section class="relative px-4 sm:px-6 py-6 z-10">
+  <div class="max-w-7xl mx-auto">
+    <div class="bg-black-color-700/50 backdrop-blur-md rounded-xl p-6 border border-celeste-color-500/30 shadow-xl">
+      <div class="flex flex-col items-center sm:flex-row sm:justify-between gap-4">
+        <div class="text-center sm:text-left space-y-2">
+          <h1 class="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-celeste-color-300 to-white">
+            Mis Semanas
+          </h1>
+          <p class="text-celeste-color-300/80 text-sm">Historial de semanas - Banco Mano Amiga</p>
+        </div>
+        @if (semanasFiltradas.length > 0 && !loading) {
+          <div class="px-4 py-2 bg-gradient-to-r from-green-600/30 to-emerald-500/30 rounded-lg border border-emerald-500/50">
+            <p class="text-sm text-emerald-300">Total: <span class="font-bold">${{ calcularTotal() | number:'1.2-2' }}</span></p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Loading state (ahora es lo único que se muestra durante carga) -->
+  @if (loading) {
+    <div class="flex justify-center py-12">
+      <div class="flex flex-col items-center gap-3">
+        <div class="relative">
+          <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-celeste-color-400"></div>
+          <div class="absolute inset-0 animate-ping rounded-full h-12 w-12 border-2 border-celeste-color-600 opacity-50"></div>
+        </div>
+        <p class="text-celeste-color-300/80 animate-pulse">Cargando semanas...</p>
+      </div>
+    </div>
+  } @else {
+    <!-- Error message -->
+    @if (error) {
+      <div class="mx-4 sm:mx-6 mb-8">
+        <div class="max-w-7xl mx-auto bg-red-500/20 border border-red-500/50 text-red-400 p-4 rounded-lg shadow-lg">
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5 animate-pulse" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zm-1 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+            </svg>
+            <span>{{ error }}</span>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Main Content -->
+    <section class="relative px-4 sm:px-6 py-4 z-10">
+      <div class="max-w-7xl mx-auto">
+        <!-- Search Box -->
+        <div class="mb-6 bg-black-color-700/30 p-4 rounded-lg">
+          <div class="relative">
+            <div class="flex">
+              <div class="relative flex-1">
+                <input type="text"
+                       [(ngModel)]="searchTerm"
+                       (input)="aplicarFiltros()"
+                       placeholder="Buscar semanas..."
+                       class="w-full pl-10 pr-3 py-3 bg-black-color-700 text-white rounded-lg border border-celeste-color-500 focus:border-celeste-color-600 focus:ring-1 focus:ring-celeste-color-500 focus:outline-none">
+                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile View -->
+        <div class="block lg:hidden">
+          @if (semanasFiltradas.length > 0) {
+            <div class="grid gap-4">
+              @for (semana of semanasFiltradas; track semana.id) {
+                <div class="bg-black-color-700/50 rounded-lg p-4 border border-celeste-color-500/30">
+                  <div class="space-y-3">
+                    <div class="flex justify-between items-start">
+                      <h3 class="text-lg font-medium text-white">Semana {{ semana.id }}</h3>
+                      <span class="px-2 py-1 bg-green-500/20 rounded-md text-center border border-green-500/50">
+                        <span class="text-green-300 font-semibold text-sm">${{ semana.valor.toFixed(2) }}</span>
+                      </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="space-y-1">
+                        <p class="text-xs text-celeste-color-300">Fecha de Pago</p>
+                        <p class="text-sm font-medium text-white">{{ semana.fecha_pago | date:'dd/MM/yyyy' }}</p>
+                      </div>
+                      <div class="space-y-1">
+                        <p class="text-xs text-celeste-color-300">Inicio Semana</p>
+                        <p class="text-sm font-medium text-white">{{ semana.inicioSemana | date:'dd/MM/yyyy' }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else if (!loading) {
+            <div class="bg-black-color-700/50 rounded-lg p-6 border border-celeste-color-500/30 text-center">
+              <h3 class="text-md font-medium text-celeste-color-300">No hay semanas registradas</h3>
+              <p class="text-sm text-celeste-color-500/70">No tienes semanas asignadas actualmente.</p>
+            </div>
+          }
+        </div>
+
+        <!-- Desktop View (sin columna redundante) -->
+        <div class="hidden lg:block">
+          @if (semanasFiltradas.length > 0) {
+            <div class="rounded-lg overflow-hidden border border-celeste-color-500/30">
+              <table class="w-full text-sm text-left text-gray-400">
+                <thead class="text-xs uppercase bg-gradient-to-br from-celeste-color-700 to-celeste-color-500 text-celeste-color-100">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 border-r border-celeste-color-500/30">
+                      Semana
+                    </th>
+                    <th scope="col" class="px-6 py-3 border-r border-celeste-color-500/30">
+                      Fecha de Pago
+                    </th>
+                    <th scope="col" class="px-6 py-3 border-r border-celeste-color-500/30">
+                      Inicio Semana
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                      Valor
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-transparent">
+                  @for (semana of semanasFiltradas; track semana.id) {
+                    <tr class="hover:bg-celeste-color-800/20 border-b border-celeste-color-500/30 transition-colors">
+                      <td class="px-6 py-4 font-medium text-white">
+                        {{ semana.id }}
+                      </td>
+                      <td class="px-6 py-4">
+                        {{ semana.fecha_pago | date:'dd/MM/yyyy' }}
+                      </td>
+                      <td class="px-6 py-4">
+                        {{ semana.inicioSemana | date:'dd/MM/yyyy' }}
+                      </td>
+                      <td class="px-6 py-4 font-medium text-green-300">
+                        ${{ semana.valor.toFixed(2) }}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else if (!loading) {
+            <div class="bg-black-color-700/50 rounded-lg p-6 border border-celeste-color-500/30 text-center">
+              <h3 class="text-md font-medium text-celeste-color-300">No hay semanas registradas</h3>
+              <p class="text-sm text-celeste-color-500/70">No tienes semanas asignadas actualmente.</p>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  }
+</main>

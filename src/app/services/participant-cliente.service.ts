@@ -13,26 +13,26 @@ export class ParticipantClienteService {
 
   // Endpoint para semanas
   getSemanas(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}api/participante/semanas`);
+    return this.http.get<any>(`${this.apiUrl}participante/semanas`);
   }
 
   // Endpoint para perfil
   getPerfil(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}api/participante/perfil`);
+    return this.http.get<any>(`${this.apiUrl}participante/perfil`);
   }
 
   // Endpoint para pagos
   getPagos(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}api/participante/pagos`);
+    return this.http.get<any>(`${this.apiUrl}participante/pagos`);
   }
 
   // Endpoint para préstamos
   getPrestamos(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}api/participante/prestamos`);
+    return this.http.get<any>(`${this.apiUrl}participante/prestamos`);
   }
 
   // Endpoint para estado de cuenta
   getEstadoCuenta(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}api/participante/estado-cuenta`);
+    return this.http.get<any>(`${this.apiUrl}participante/estado-cuenta`);
   }
 }

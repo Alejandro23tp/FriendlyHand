@@ -8,19 +8,16 @@ import { HttpErrorResponse } from '@angular/common/http';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
 
-  // Validar si la solicitud pertenece al participante (más estricta)
-  const isParticipantRequest =
-    req.url.startsWith('/participante') || // Rutas del prefijo participante
-    req.url.startsWith('/auth/participante'); // Rutas de autenticación para participante
+  // Identificar si la solicitud pertenece a participante según la URL
+  const isParticipantRequest = req.url.includes('/participante');
 
-  // Seleccionar el token correcto dependiendo del contexto
+  // Seleccionar el token adecuado según el contexto
   const token = isParticipantRequest
     ? localStorage.getItem('participant_jwt_token') // Token del participante
     : localStorage.getItem('jwt_token'); // Token del administrador
 
-  const isLoginRequest = req.url.includes('auth/login');
-
-  if (token && !isLoginRequest) {
+  // Agregar el token si existe
+  if (token) {
     req = req.clone({
       headers: req.headers.set('Authorization', `Bearer ${token}`)
     });
@@ -28,7 +25,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !isLoginRequest && token) {
+      // Manejo de errores 401
+      if (error.status === 401 && token) {
         toast.error('Sesión expirada', {
           description: 'Por favor, inicie sesión nuevamente'
         });
@@ -38,4 +36,3 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     })
   );
 };
-
